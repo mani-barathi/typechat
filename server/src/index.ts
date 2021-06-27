@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import express from "express";
 import path from "path";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createConnection } from "typeorm";
 
@@ -17,15 +18,19 @@ const main = async () => {
   });
 
   const app = express();
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+      methods: ["GET", "POST"],
+    })
+  );
   app.use(cookieParser());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
   // Routes
-  app.get("/", (req, res) => {
-    console.log(req.cookies.pot);
-    res.send({ message: "Hello World" });
-  });
+  app.get("/", (_, res) => res.send({ message: "Hello World" }));
   app.use("/api/auth", authRoutes);
 
   app.listen(PORT, () => console.log(`server: http://localhost:${PORT}/`));

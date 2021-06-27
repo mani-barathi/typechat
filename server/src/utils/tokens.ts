@@ -42,8 +42,17 @@ export const sendRefreshTokenAsCookie = (
 ) => {
   res.cookie(COOKIE_NAME, refreshToken, {
     httpOnly: true,
-    path: "api/auth/refresh",
+    path: "/api/auth/refresh",
     secure: PROD,
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  });
+};
+
+export const clearRefreshTokenCookie = (res: Response) => {
+  res.cookie(COOKIE_NAME, "", {
+    httpOnly: true,
+    path: "/api/auth/refresh",
+    secure: PROD,
+    maxAge: 0,
   });
 };

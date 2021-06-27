@@ -5,6 +5,7 @@ import { validateSignUp } from "../utils/validations";
 import User from "../entities/User";
 import { EntityNotFoundError } from "typeorm";
 import {
+  clearRefreshTokenCookie,
   createTokens,
   sendRefreshTokenAsCookie,
   verifyRefreshToken,
@@ -100,6 +101,11 @@ router.post("/login", async (req: Request, res: Response) => {
     }
     return res.status(500).json({ error: "something went wrong" });
   }
+});
+
+router.post("/logout", (_, res: Response) => {
+  clearRefreshTokenCookie(res);
+  return res.json({ ok: true });
 });
 
 export default router;
