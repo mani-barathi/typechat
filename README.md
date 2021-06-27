@@ -1,8 +1,16 @@
-# Circles
+# TypeChat
 
 Developing a Chat App using React, Express and Socket.io
 
 ## Setup
+
+### Database
+
+1. Make sure you have Postgres installed in your computer if not install it from [here](https://www.postgresql.org/)
+1. Open the Postgres shell(psql) and create a database
+   ```shell
+       create database typechat;
+   ```
 
 ### Frontend
 
