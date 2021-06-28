@@ -1,27 +1,29 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import axios from "../axios";
+import { useAuth } from "../contexts/AuthContext";
+import useCheckUserAvailable from "../hooks/useCheckUserAvailable";
 import useForm from "../hooks/useForm";
 import { LoginInput, LoginResponse } from "../types";
 import { setAccessToken } from "../utils/token";
 
 interface LoginPageProps {}
 
-const loginInputDefaultValue = {
-  email: "",
-  password: "",
-};
-
 const LoginPage: React.FC<LoginPageProps> = () => {
+  const history = useHistory();
+  const { next } = useParams<{ next: string }>();
+  const { setUser } = useAuth();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [formData, handleChange, clearForm, formRef] = useForm<LoginInput>(
-    loginInputDefaultValue
-  );
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, handleChange, , formRef] = useForm<LoginInput>({
+    email: "",
+    password: "",
+  });
+  const loading = useCheckUserAvailable();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setError("");
 
     try {
@@ -33,14 +35,20 @@ const LoginPage: React.FC<LoginPageProps> = () => {
         setError(resData.error!);
       } else {
         setAccessToken(resData.data.accessToken);
-        clearForm();
+        setUser(resData.data.user);
+        const path = next || "/";
+        return history.push(path);
       }
     } catch (e) {
       console.log("signup page:", e);
       setError(e.message);
     }
-    setLoading(false);
+    setSubmitting(false);
   };
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <div>
@@ -67,12 +75,12 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           />
         </div>
         {error && <p>{error}</p>}
-        <button disabled={loading} type="submit">
+        <button disabled={submitting} type="submit">
           Submit
         </button>
 
         <div>
-          <Link to="/Signup">Signup</Link>
+          <Link to="/signup">Signup</Link>
         </div>
       </form>
     </div>

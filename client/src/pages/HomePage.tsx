@@ -1,30 +1,25 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { useHistory } from "react-router-dom";
 import axios from "../axios";
+import { useAuth } from "../contexts/AuthContext";
 
 interface HomePageProps {}
 
 const HomePage: React.FC<HomePageProps> = () => {
-  useEffect(() => {
-    axios.post("/api/auth/refresh").then((response) => {
-      console.log(response.data);
-    });
-  }, []);
+  const { user, setUser } = useAuth();
+  const history = useHistory();
 
   const handleLogout = async () => {
-    const response = await axios.post("/api/auth/logout");
+    await axios.post("/api/auth/logout");
+    setUser(null);
+    history.push("/login");
   };
 
   return (
     <div>
-      HomePage
-      <div>
-        <Link to="/login">Login</Link>
-      </div>
-      <div>
-        <Link to="/signup">Signup</Link>
-      </div>
+      <h1>HomePage</h1>
       <button onClick={handleLogout}>Logout</button>
+      <pre>{JSON.stringify(user, null, 2)}</pre>
     </div>
   );
 };

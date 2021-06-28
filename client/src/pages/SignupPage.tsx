@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "../axios";
+import useCheckUserAvailable from "../hooks/useCheckUserAvailable";
 import useForm from "../hooks/useForm";
 import { SignUpError, SignUpInput, SignUpResponse } from "../types";
 
@@ -12,14 +13,15 @@ const SignUpDefaultValue = {
 };
 
 const SignupPage: React.FC<SignupPageProps> = () => {
-  const [loading, setLoading] = useState(false);
+  const loading = useCheckUserAvailable();
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<SignUpError>(SignUpDefaultValue);
   const [formData, handleChange, clearForm, formRef] =
     useForm<SignUpInput>(SignUpDefaultValue);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setErrors(SignUpDefaultValue);
 
     try {
@@ -35,8 +37,10 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     } catch (e) {
       console.log("signup page:", e);
     }
-    setLoading(false);
+    setSubmitting(false);
   };
+
+  if (loading) return <h1>Loading...</h1>;
 
   return (
     <div>
@@ -75,7 +79,7 @@ const SignupPage: React.FC<SignupPageProps> = () => {
           />
           {errors.password && <p>{errors.password}</p>}
         </div>
-        <button disabled={loading} type="submit">
+        <button disabled={submitting} type="submit">
           Submit
         </button>
 
