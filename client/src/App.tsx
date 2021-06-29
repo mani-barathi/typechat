@@ -35,7 +35,7 @@ function App() {
   if (loading) return <h1>Loading...</h1>;
 
   return (
-    <div className="app">
+    <div className="w-screen h-screen bg-gray-100 flex flex-column justify-center  items-center">
       <Switch>
         <Route path="/signup" component={SignupPage} />
         <Route path="/login" component={LoginPage} />
