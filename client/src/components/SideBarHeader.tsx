@@ -17,22 +17,20 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
     history.push("/login");
   };
   return (
-    <div>
-      <div className="flex justify-between p-3 border-b bg-green-400 xl:rounded-tl">
-        <img
-          src={`https://ui-avatars.com/api/?name=${user?.username}&background=D5F5E3`}
-          alt=""
-          className="w-10 h-10 rounded-full object-cover"
-        />
+    <div className="flex justify-between p-3 border-b bg-green-400 xl:rounded-tl">
+      <img
+        src={`https://ui-avatars.com/api/?name=${user?.username}&background=D5F5E3`}
+        alt=""
+        className="w-10 h-10 rounded-full object-cover"
+      />
 
-        <button
-          className="px-2 text-white rounded-full transition duration-150 transform hover:translate-x-0.5"
-          onClick={handleLogout}
-          title="logout"
-        >
-          <LogoutIcon className="h-6 w-6" />
-        </button>
-      </div>
+      <button
+        className="px-2 text-white rounded-full transition duration-150 transform hover:translate-x-0.5"
+        onClick={handleLogout}
+        title="logout"
+      >
+        <LogoutIcon className="h-6 w-6" />
+      </button>
     </div>
   );
 };
