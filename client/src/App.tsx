@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
@@ -6,7 +7,6 @@ import SignupPage from "./pages/SignupPage";
 
 import PrivateRoute from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
-import { useEffect, useState } from "react";
 import axios from "./axios";
 import { LoginResponse } from "./types";
 import { setAccessToken } from "./utils/token";

@@ -11,8 +11,15 @@ import {
   verifyRefreshToken,
 } from "../utils/tokens";
 import { COOKIE_NAME } from "../contants";
+import { isAuthenticated } from "../middlewares/auth";
 
 const router = Router();
+
+router.get("/random", isAuthenticated, async (req: Request, res: Response) => {
+  const { username } = req.user;
+  const text = `Hello ${username} you got ${Math.floor(Math.random() * 1000)}`;
+  return res.json(text);
+});
 
 router.post("/refresh", async (req: Request, res: Response) => {
   const token = req.cookies[COOKIE_NAME];
@@ -20,19 +27,19 @@ router.post("/refresh", async (req: Request, res: Response) => {
     return res.json({ ok: false, error: "no token provided" });
   }
   try {
-    const payload: any = verifyRefreshToken(token);
+    const payload = verifyRefreshToken(token);
     if (!payload) {
       return res.json({ ok: false, error: "invalid token" });
     }
 
     const user = await User.findOneOrFail({ id: payload.id });
     const { accessToken, refreshToken } = await createTokens(user);
-    sendRefreshTokenAsCookie(res, refreshToken);
     const loggedUser = {
       username: user.username,
       email: user.email,
       id: user.id,
     };
+    sendRefreshTokenAsCookie(res, refreshToken);
     return res.json({ ok: true, data: { user: loggedUser, accessToken } });
   } catch (e) {
     if (e instanceof EntityNotFoundError) {
@@ -88,12 +95,12 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.json({ error: "invalid credentials" });
     }
     const { accessToken, refreshToken } = await createTokens(user);
-    sendRefreshTokenAsCookie(res, refreshToken);
     const loggedUser = {
       username: user.username,
       email: user.email,
       id: user.id,
     };
+    sendRefreshTokenAsCookie(res, refreshToken);
     return res.json({ ok: true, data: { user: loggedUser, accessToken } });
   } catch (e) {
     if (e instanceof EntityNotFoundError) {

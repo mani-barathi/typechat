@@ -2,6 +2,7 @@ import { Response } from "express";
 import jwt from "jsonwebtoken";
 import { COOKIE_NAME, PROD, SECRET1, SECRET2 } from "../contants";
 import User from "../entities/User.js";
+import { JWTPayload } from "../types";
 
 export const createTokens = async (user: User) => {
   const { username, id } = user;
@@ -18,19 +19,19 @@ export const createTokens = async (user: User) => {
   return { accessToken, refreshToken };
 };
 
-export const verifyAccessToken = (accessToken: string) => {
+export const verifyAccessToken = (accessToken: string): JWTPayload | null => {
   try {
     const data = jwt.verify(accessToken, SECRET1);
-    return data;
+    return data as JWTPayload;
   } catch (error) {
     return null;
   }
 };
 
-export const verifyRefreshToken = (refreshToken: string) => {
+export const verifyRefreshToken = (refreshToken: string): JWTPayload | null => {
   try {
     const data = jwt.verify(refreshToken, SECRET2);
-    return data;
+    return data as JWTPayload;
   } catch (error) {
     return null;
   }

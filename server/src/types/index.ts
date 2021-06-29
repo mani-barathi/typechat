@@ -1,3 +1,10 @@
+export interface JWTPayload {
+  id: number;
+  username: string;
+  iat: number;
+  exp: number;
+}
+
 export interface ResponseData {
   ok: boolean;
   data?: any;
