@@ -6,7 +6,10 @@
   @apply outline-none font-medium border-2 border-gray-400 rounded w-full p-2 focus:border-green-400;
 }
 .form-btn {
-  @apply flex items-center px-4 py-1 mt-1 mb-1 bg-green-400 font-semibold text-black uppercase tracking-wider border-2 rounded border-green-400 transition hover:bg-green-500 hover:border-green-500 transform focus:scale-95;
+  @apply flex items-center px-4 py-1 mt-1 mb-1 bg-green-400 font-semibold text-black uppercase tracking-wider border-2 rounded border-green-400 transition hover:bg-green-500 hover:border-green-500;
+}
+.form-btn-secondary {
+  @apply flex items-center px-4 py-1 mt-1 mb-1 bg-gray-400 font-semibold text-black uppercase tracking-wider border-2 rounded border-gray-400 transition hover:bg-gray-500 hover:border-gray-500;
 }
 .link {
   @apply font-semibold text-green-500 hover:underline hover:text-green-600;

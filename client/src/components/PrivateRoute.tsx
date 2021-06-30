@@ -15,11 +15,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     <Route
       {...rest}
       render={(props) =>
-        user ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={`/login?next=${rest.path}`} />
-        )
+        user ? <Component {...props} /> : <Redirect to={`/login`} />
       }
     ></Route>
   );
