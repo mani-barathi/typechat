@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Splash from "../components/Splash";
+
 import axios from "../axios";
 import useCheckUserAvailable from "../hooks/useCheckUserAvailable";
 import useForm from "../hooks/useForm";
@@ -40,13 +42,22 @@ const SignupPage: React.FC<SignupPageProps> = () => {
     setSubmitting(false);
   };
 
-  if (loading) return <h1>Loading...</h1>;
+  if (loading) return <Splash />;
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <form ref={formRef} onSubmit={handleSubmit} autoComplete="off">
-        <div>
+    <div
+      className="m-2 p-2 py-4 rounded shadow-lg transform -translate-y-5 bg-white w-full"
+      style={{ maxWidth: "500px" }}
+    >
+      <h1 className="text-4xl text-center text-green-500">TypeChat</h1>
+
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        autoComplete="off"
+        className="mt-2 p-2 w-full"
+      >
+        <div className="mb-2">
           <input
             onChange={handleChange}
             value={formData.username}
@@ -54,10 +65,13 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             type="text"
             name="username"
             placeholder="Username"
+            className="form-input"
           />
-          {errors.username && <p>{errors.username}</p>}
+          {errors.username && (
+            <p className="text-red-500 font-semibold mb-1">{errors.username}</p>
+          )}
         </div>
-        <div>
+        <div className="mb-2">
           <input
             required
             onChange={handleChange}
@@ -65,10 +79,13 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             type="email"
             name="email"
             placeholder="email"
+            className="form-input"
           />
-          {errors.email && <p>{errors.email}</p>}
+          {errors.email && (
+            <p className="text-red-500 font-semibold mb-1">{errors.email}</p>
+          )}
         </div>
-        <div>
+        <div className="mb-2">
           <input
             required
             onChange={handleChange}
@@ -76,15 +93,21 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             type="password"
             name="password"
             placeholder="password"
+            className="form-input"
           />
-          {errors.password && <p>{errors.password}</p>}
+          {errors.password && (
+            <p className="text-red-500 font-semibold mb-1">{errors.password}</p>
+          )}
         </div>
-        <button disabled={submitting} type="submit">
-          Submit
+        <button className="form-btn" disabled={submitting} type="submit">
+          Sign Up
         </button>
 
         <div>
-          <Link to="/login">Login</Link>
+          <span className="mr-2">Already have an account</span>
+          <Link to="/login" className="link">
+            Login
+          </Link>
         </div>
       </form>
     </div>

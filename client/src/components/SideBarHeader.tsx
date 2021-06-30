@@ -4,6 +4,7 @@ import { LogoutIcon } from "@heroicons/react/outline";
 
 import axios from "../axios";
 import { useAuth } from "../contexts/AuthContext";
+import { setAccessToken } from "../utils/token";
 
 interface SideBarHeaderProps {}
 
@@ -14,6 +15,7 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
   const handleLogout = async () => {
     await axios.post("/api/auth/logout");
     setUser(null);
+    setAccessToken('')
     history.push("/login");
   };
   return (

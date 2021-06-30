@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
+import { LoginIcon } from "@heroicons/react/outline";
+import Splash from "../components/Splash";
+
 import axios from "../axios";
 import { useAuth } from "../contexts/AuthContext";
 import useCheckUserAvailable from "../hooks/useCheckUserAvailable";
@@ -46,15 +49,22 @@ const LoginPage: React.FC<LoginPageProps> = () => {
     setSubmitting(false);
   };
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
+  if (loading) return <Splash />;
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form ref={formRef} onSubmit={handleSubmit} autoComplete="off">
-        <div>
+    <div
+      className="m-2 p-2 py-4 rounded shadow-lg transform -translate-y-5 bg-white w-full"
+      style={{ maxWidth: "500px" }}
+    >
+      <h1 className="text-4xl text-center text-green-500">TypeChat</h1>
+
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="mt-2 p-2 w-full"
+        autoComplete="off"
+      >
+        <div className="mb-2">
           <input
             required
             onChange={handleChange}
@@ -62,9 +72,10 @@ const LoginPage: React.FC<LoginPageProps> = () => {
             name="email"
             placeholder="email"
             value={formData.email}
+            className="form-input"
           />
         </div>
-        <div>
+        <div className="mb-2">
           <input
             required
             onChange={handleChange}
@@ -72,15 +83,27 @@ const LoginPage: React.FC<LoginPageProps> = () => {
             name="password"
             placeholder="password"
             value={formData.password}
+            className="form-input"
           />
         </div>
-        {error && <p>{error}</p>}
-        <button disabled={submitting} type="submit">
-          Submit
+        {error && (
+          <div className="bg-red-200 text-reg-800 py-2 px-4 mt-1 mb-1 rounded">
+            {error}
+          </div>
+        )}
+
+        <button
+          disabled={submitting}
+          type="submit"
+          className="form-btn"
+        >
+          <LoginIcon className="h-5 w-5 mr-2" />
+          Login
         </button>
 
         <div>
-          <Link to="/signup">Signup</Link>
+          <span className="mr-2">New Create an Account here</span>
+          <Link to="/signup" className="link">Signup</Link>
         </div>
       </form>
     </div>

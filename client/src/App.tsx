@@ -4,6 +4,7 @@ import { Route, Switch, useHistory } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import Splash from "./components/Splash";
 
 import PrivateRoute from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
@@ -32,7 +33,7 @@ function App() {
     });
   }, [setUser, history]);
 
-  if (loading) return <h1>Loading...</h1>;
+  if (loading) return <Splash />;
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex flex-column justify-center  items-center">
