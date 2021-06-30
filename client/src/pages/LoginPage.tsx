@@ -87,23 +87,21 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           />
         </div>
         {error && (
-          <div className="bg-red-200 text-reg-800 py-2 px-4 mt-1 mb-1 rounded">
+          <div className="bg-red-200 text-red-800 py-2 px-4 mt-1 mb-1 rounded">
             {error}
           </div>
         )}
 
-        <button
-          disabled={submitting}
-          type="submit"
-          className="form-btn"
-        >
+        <button disabled={submitting} type="submit" className="form-btn">
           <LoginIcon className="h-5 w-5 mr-2" />
           Login
         </button>
 
         <div>
           <span className="mr-2">New Create an Account here</span>
-          <Link to="/signup" className="link">Signup</Link>
+          <Link to="/signup" className="link">
+            Signup
+          </Link>
         </div>
       </form>
     </div>

@@ -17,6 +17,7 @@ const SignUpDefaultValue = {
 const SignupPage: React.FC<SignupPageProps> = () => {
   const loading = useCheckUserAvailable();
   const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [errors, setErrors] = useState<SignUpError>(SignUpDefaultValue);
   const [formData, handleChange, clearForm, formRef] =
     useForm<SignUpInput>(SignUpDefaultValue);
@@ -35,6 +36,9 @@ const SignupPage: React.FC<SignupPageProps> = () => {
         setErrors(resData.errors as any);
       } else {
         clearForm();
+        setSuccessMessage(
+          `Account Created for ${resData.data.username}, Now you can login`
+        );
       }
     } catch (e) {
       console.log("signup page:", e);
@@ -99,6 +103,11 @@ const SignupPage: React.FC<SignupPageProps> = () => {
             <p className="text-red-500 font-semibold mb-1">{errors.password}</p>
           )}
         </div>
+        {successMessage && (
+          <div className="bg-green-200 text-green-700 py-2 px-4 mt-1 mb-1 rounded">
+            {successMessage}
+          </div>
+        )}
         <button className="form-btn" disabled={submitting} type="submit">
           Sign Up
         </button>
