@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { createConnection } from "typeorm";
 
 import authRoutes from "./routes/auth";
+import usersRoutes from "./routes/users";
 import { PORT } from "./contants";
 
 const main = async () => {
@@ -32,6 +33,7 @@ const main = async () => {
   // Routes
   app.get("/", (_, res) => res.send({ message: "Hello World" }));
   app.use("/api/auth", authRoutes);
+  app.use("/api/users", usersRoutes);
 
   app.listen(PORT, () => console.log(`server: http://localhost:${PORT}/`));
 };

@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
+import axios from "../axios";
+import { SearchUser } from "../types";
 
 interface NewChatFormProps {
   closeFn: () => void;
@@ -6,14 +8,28 @@ interface NewChatFormProps {
 
 const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const [error, setError] = useState("");
+
+  const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = async (
+    e
+  ) => {
     e.preventDefault();
-    console.log(inputRef.current?.value);
-    inputRef.current!.value = "";
+    setError("");
+
+    const { data: resData } = await axios.get<SearchUser>(
+      `/api/users/${inputRef.current!.value}`
+    );
+    if (resData.ok) {
+      console.log(resData.data);
+      // dispatch action
+      return closeFn();
+    } else {
+      setError(resData.error!);
+    }
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form onSubmit={handleFormSubmit} autoComplete="off">
       <input
         ref={inputRef}
         type="text"
@@ -21,6 +37,9 @@ const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
         placeholder="Enter a Username"
         required
       />
+      {error && (
+        <div className="py-2 px-3 bg-red-200 text-red-800 rounded">{error}</div>
+      )}
       <div className="flex justify-end">
         <button
           type="button"

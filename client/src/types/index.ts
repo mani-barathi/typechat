@@ -34,3 +34,7 @@ export interface LoginInput {
   email: string;
   password: string;
 }
+
+export interface SearchUser extends ResponseData {
+  data: User | undefined;
+}
