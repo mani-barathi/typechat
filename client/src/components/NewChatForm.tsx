@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "../axios";
+import { newDirectChat } from "../store/actionCreators";
+import { useAppDispatch } from "../store/hooks";
 import { SearchUser } from "../types";
 
 interface NewChatFormProps {
@@ -9,6 +11,7 @@ interface NewChatFormProps {
 const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
 
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = async (
     e
@@ -21,7 +24,7 @@ const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
     );
     if (resData.ok) {
       console.log(resData.data);
-      // dispatch action
+      dispatch(newDirectChat(resData.data!));
       return closeFn();
     } else {
       setError(resData.error!);

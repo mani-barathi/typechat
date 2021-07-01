@@ -5,9 +5,12 @@ import Modal from "./Modal";
 import NewChatForm from "./NewChatForm";
 import NewGroupForm from "./NewGroupForm";
 
+import { useAppSelector } from "../store/hooks";
+
 interface SideBarProps {}
 
 const SideBar: React.FC<SideBarProps> = () => {
+  const { chats } = useAppSelector((store) => store.newChat);
   const [groupChatModal, setGroupModalChat] = useState(false);
   const [chatModal, setChatModal] = useState(false);
 
@@ -19,17 +22,9 @@ const SideBar: React.FC<SideBarProps> = () => {
       />
 
       <div className="sidebar__chats pb-5 flex-grow overflow-x-hidden overflow-y-auto">
-        <SideBarChat user={{ username: "Person 1", id: 2 }} />
-        <SideBarChat user={{ username: "Person 2", id: 2 }} />
-        <SideBarChat user={{ username: "Person 3", id: 2 }} />
-        <SideBarChat user={{ username: "Person 4", id: 2 }} />
-        <SideBarChat user={{ username: "Person 5", id: 2 }} />
-        <SideBarChat user={{ username: "Person 6", id: 2 }} />
-        <SideBarChat user={{ username: "Person 7", id: 2 }} />
-        <SideBarChat user={{ username: "Person 8", id: 2 }} />
-        <SideBarChat user={{ username: "Person 9", id: 2 }} />
-        <SideBarChat user={{ username: "Group xy", id: 2 }} />
-        <SideBarChat user={{ username: "Group ab", id: 2 }} />
+        {chats.map((chat) => (
+          <SideBarChat user={{ username: chat.username, id: chat.id }} />
+        ))}
       </div>
 
       <Modal
