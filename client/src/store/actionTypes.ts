@@ -4,3 +4,8 @@ export type ChatsAction = {
   type: string;
   payload: User;
 };
+
+export type CurrentChatAction = {
+  type: string;
+  payload: User;
+};

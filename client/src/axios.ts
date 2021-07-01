@@ -8,6 +8,8 @@ const axios = Axios.create({
 
 axios.interceptors.request.use(
   async function (config) {
+    if (config.url?.endsWith("logout")) return config;
+
     await fetchNewTokens();
     const token = getAccessToken();
     config.headers.authorization = token ? `Bearer ${token}` : "";

@@ -10,7 +10,7 @@ import { useAppSelector } from "../store/hooks";
 interface SideBarProps {}
 
 const SideBar: React.FC<SideBarProps> = () => {
-  const { chats } = useAppSelector((store) => store.newChat);
+  const { chats } = useAppSelector((store) => store.chats);
   const [groupChatModal, setGroupModalChat] = useState(false);
   const [chatModal, setChatModal] = useState(false);
 
@@ -23,7 +23,7 @@ const SideBar: React.FC<SideBarProps> = () => {
 
       <div className="sidebar__chats pb-5 flex-grow overflow-x-hidden overflow-y-auto">
         {chats.map((chat) => (
-          <SideBarChat user={{ username: chat.username, id: chat.id }} />
+          <SideBarChat key={chat.username} user={chat} />
         ))}
       </div>
 
