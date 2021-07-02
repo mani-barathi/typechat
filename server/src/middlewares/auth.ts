@@ -20,3 +20,18 @@ export const isAuthenticated = (
     return res.status(401).json({ ok: false, error: "not authorized" });
   }
 };
+
+export const authenticateSocket = (socket: any, next: Function) => {
+  const { accessToken } = socket.handshake.auth;
+  try {
+    const payload = verifyAccessToken(accessToken);
+    if (!payload) {
+      console.log("Not authorized.");
+      return next(new Error("Not authorized."));
+    }
+    socket.username = payload.username;
+    return next();
+  } catch (err) {
+    return next(new Error("Not authorized."));
+  }
+};
