@@ -9,6 +9,7 @@ import { createConnection } from "typeorm";
 
 import authRoutes from "./routes/auth";
 import usersRoutes from "./routes/users";
+import directMessageRoutes from "./routes/directMessages";
 import { PORT } from "./contants";
 import { getPrivateChatRoomIds } from "./utils/chat";
 import { authenticateSocket } from "./middlewares/auth";
@@ -61,6 +62,7 @@ const main = async () => {
   app.get("/", (_, res) => res.send({ message: "Hello World" }));
   app.use("/api/auth", authRoutes);
   app.use("/api/users", usersRoutes);
+  app.use("/api/direct-message", directMessageRoutes);
 
   httpServer.listen(PORT, () => console.log(`http://localhost:${PORT}/`));
 };

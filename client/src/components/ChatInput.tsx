@@ -1,16 +1,27 @@
 import React, { useRef } from "react";
 import { ArrowRightIcon } from "@heroicons/react/outline";
+import axios from "../axios";
+import { useAppSelector } from "../store/hooks";
 
 interface ChatInputProps {}
 
 const ChatInput: React.FC<ChatInputProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { receiver } = useAppSelector((state) => state.currentChat);
 
-  const handleSendMessage: React.FormEventHandler = (e) => {
+  const handleSendMessage: React.FormEventHandler = async (e) => {
     e.preventDefault();
-    console.log(inputRef.current?.value);
-
-    inputRef.current!.value = "";
+    const payload = {
+      receiverId: receiver!.id,
+      receiverName: receiver!.username,
+      text: inputRef.current!.value,
+    };
+    try {
+      await axios.post("/api/direct-message/send", payload);
+      inputRef.current!.value = "";
+    } catch (e) {
+      console.log("Chat Input:", e);
+    }
   };
 
   return (

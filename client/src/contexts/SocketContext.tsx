@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { fetchNewTokens, getAccessToken } from "../utils/token";
 import { useAuth } from "./AuthContext";
@@ -50,5 +50,7 @@ const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
     </SocketContext.Provider>
   );
 };
+
+export const useSocket = () => useContext(SocketContext);
 
 export default SocketProvider;
