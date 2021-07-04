@@ -1,13 +1,24 @@
 import React from "react";
+import { setCurrentChat } from "../store/actionCreators";
+import { useAppDispatch } from "../store/hooks";
 import { User } from "../types/entities";
 
 interface SideBarChatProps {
-  user: Pick<User, "username" | "id">;
+  user: User;
 }
 
 const SideBarChat: React.FC<SideBarChatProps> = ({ user }) => {
+  const dispatch = useAppDispatch();
+
+  const goToChat = () => {
+    dispatch(setCurrentChat(user));
+  };
+
   return (
-    <div className="max-w-full flex items-center p-2 border-b bg-gray-50 cursor-pointer hover:bg-gray-100">
+    <div
+      className="max-w-full flex items-center p-2 border-b bg-gray-50 cursor-pointer hover:bg-gray-100"
+      onClick={goToChat}
+    >
       <img
         src={`https://ui-avatars.com/api/?name=${user?.username}&background=D5F5E3`}
         alt=""

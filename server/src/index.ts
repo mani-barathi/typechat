@@ -45,13 +45,21 @@ const main = async () => {
 
   io.use(authenticateSocket).on("connection", (socket: Socket) => {
     const { username }: any = socket;
-    console.log("user connected", username);
+    console.log(`${username} connected!`);
 
-    socket.on("direct-message", async (data: any) => {
+    socket.on("join-direct-message", async (data: any) => {
       const { receiverName } = data;
       const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);
       await socket.join(senderRoomId);
       console.log(`${username} is chatting with ${receiverName}`);
+    });
+
+    socket.on("leave-direct-message", async (data: any) => {
+      const { receiverName } = data;
+      const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);
+      await socket.leave(senderRoomId);
+      socket.rooms.delete(senderRoomId);
+      console.log(`${username} has left $${senderRoomId}`);
     });
 
     socket.on("disconnect", () => console.log("user disconnected"));

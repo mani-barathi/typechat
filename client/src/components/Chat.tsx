@@ -17,14 +17,17 @@ const Chat: React.FC<ChatProps> = () => {
 
   useEffect(() => {
     if (!receiver || !socket) return;
-    socket.emit("direct-message", { receiverName: receiver.username });
-    console.log("connected to direct-message");
-    socket.on("receive-direct-message", (message: DirectMessage) => {
+    const messageReceiver = (message: DirectMessage) => {
       setMessages((p) => [...p, message]);
-    });
+    };
+
+    socket.emit("join-direct-message", { receiverName: receiver.username });
+    socket.on("receive-direct-message", messageReceiver);
+    console.log("connected to direct-message");
 
     return () => {
-      socket?.off("receive-direct-message");
+      socket.off("receive-direct-message", messageReceiver);
+      socket?.emit("leave-direct-message", { receiverName: receiver.username });
     };
   }, [socket, receiver]);
 
@@ -32,7 +35,7 @@ const Chat: React.FC<ChatProps> = () => {
     <div className="p-2 flex-grow overflow-x-hidden overflow-y-auto">
       <h1 className="text-2xl">Chat section</h1>
       {messages.map((msg) => (
-        <ChatMessage message={msg} />
+        <ChatMessage key={msg.id} message={msg} />
       ))}
     </div>
   );
