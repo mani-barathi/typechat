@@ -9,12 +9,17 @@ const ChatInput: React.FC<ChatInputProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { receiver } = useAppSelector((state) => state.currentChat);
 
+  if (!receiver) return null;
+
   const handleSendMessage: React.FormEventHandler = async (e) => {
     e.preventDefault();
+    const text = inputRef.current!.value;
+    if (!text) return;
+
     const payload = {
       receiverId: receiver!.id,
       receiverName: receiver!.username,
-      text: inputRef.current!.value,
+      text,
     };
     try {
       await axios.post("/api/direct-message/send", payload);

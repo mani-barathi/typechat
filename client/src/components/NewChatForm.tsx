@@ -39,8 +39,8 @@ const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
         `/api/users/${receiverName}`
       );
       if (resData.ok) {
-        dispatch(newDirectChat(resData.data!));
         dispatch(setCurrentChat(resData.data!));
+        dispatch(newDirectChat(resData.data!));
         return closeFn();
       } else {
         setError(resData.error!);

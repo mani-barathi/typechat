@@ -33,7 +33,7 @@ function App() {
     });
   }, [setUser, history]);
 
-  if (loading) return <Splash />;
+  if (loading) return <Splash spinner={true} />;
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex flex-column justify-center  items-center">

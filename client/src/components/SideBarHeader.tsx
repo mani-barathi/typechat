@@ -5,6 +5,7 @@ import { UserGroupIcon } from "@heroicons/react/solid";
 import axios from "../axios";
 import { useAuth } from "../contexts/AuthContext";
 import { setAccessToken } from "../utils/token";
+import { getAvatarUrl } from "../utils/common";
 
 interface SideBarHeaderProps {
   openChatModal: () => void;
@@ -26,7 +27,7 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = ({
   return (
     <div className="flex items-center justify-between p-3 border-b bg-green-400 xl:rounded-tl">
       <img
-        src={`https://ui-avatars.com/api/?name=${user?.username}&background=D5F5E3`}
+        src={getAvatarUrl(user!.username)}
         alt=""
         className="w-10 h-10 rounded-full object-cover"
       />
