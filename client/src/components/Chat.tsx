@@ -4,6 +4,8 @@ import Splash from "./Splash";
 import { useSocket } from "../contexts/SocketContext";
 import { useAppSelector } from "../store/hooks";
 import { DirectMessage } from "../types/entities";
+import axios from "../axios";
+import { ResponseData } from "../types";
 
 interface ChatProps {}
 
@@ -14,7 +16,23 @@ const Chat: React.FC<ChatProps> = () => {
   const chatDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMessages([]);
+    if (!receiver) return;
+
+    (async () => {
+      const payload = { receiverId: receiver!.id };
+      const { data: resData } = await axios.post<ResponseData>(
+        "/api/direct-message/",
+        payload
+      );
+      const { data, ok } = resData;
+      console.log(resData);
+      if (ok) {
+        setMessages(data);
+        const scrollTop =
+          chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
+        chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
+      }
+    })();
   }, [receiver]);
 
   useEffect(() => {
@@ -28,7 +46,6 @@ const Chat: React.FC<ChatProps> = () => {
 
     socket.emit("join-direct-message", { receiverName: receiver.username });
     socket.on("receive-direct-message", messageReceiver);
-    console.log("connected to direct-message");
 
     return () => {
       socket.off("receive-direct-message", messageReceiver);

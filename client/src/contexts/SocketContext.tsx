@@ -33,10 +33,8 @@ const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
       newSocket.on("connect", () => setSocket(newSocket));
 
       newSocket.on("connect_error", async (error: any) => {
-        console.log(error);
         await fetchNewTokens();
-        newSocket?.connect();
-        setSocket(newSocket);
+        console.log(error);
       });
     };
     connectSocket();
