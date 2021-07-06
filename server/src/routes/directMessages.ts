@@ -11,8 +11,6 @@ const router = Router();
 router.post("/", isAuthenticated, async (req, res) => {
   const { id: senderId } = req.user;
   const { receiverId } = req.body;
-  console.log(senderId);
-  console.log(receiverId);
 
   const messages = await getManager().query(
     `

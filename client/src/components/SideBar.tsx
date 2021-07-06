@@ -1,19 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SideBarHeader from "./SideBarHeader";
 import SideBarChat from "./SideBarChat";
 import Modal from "./Modal";
 import NewChatForm from "./NewChatForm";
 import NewGroupForm from "./NewGroupForm";
 
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import axios from "../axios";
+import { ResponseData } from "../types";
+import { setRecentChats } from "../store/actionCreators";
 
 interface SideBarProps {}
 
 const SideBar: React.FC<SideBarProps> = () => {
+  const dispatch = useAppDispatch();
   const { chats } = useAppSelector((store) => store.chats);
   const { receiver } = useAppSelector((store) => store.currentChat);
   const [groupChatModal, setGroupModalChat] = useState(false);
   const [chatModal, setChatModal] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: resData } = await axios.get<ResponseData>("/api/chats/");
+        const { ok, data } = resData;
+        if (ok) dispatch(setRecentChats(data));
+      } catch (e) {
+        console.log("sidebar", e);
+      }
+    })();
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col w-2/6 h-full border-r border-gray-200">

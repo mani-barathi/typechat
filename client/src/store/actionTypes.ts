@@ -2,7 +2,7 @@ import { User } from "../types/entities";
 
 export type ChatsAction = {
   type: string;
-  payload: User;
+  payload: User | User[];
 };
 
 export type CurrentChatAction = {
