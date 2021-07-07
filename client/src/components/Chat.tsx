@@ -6,28 +6,33 @@ import { useAppSelector } from "../store/hooks";
 import { DirectMessage } from "../types/entities";
 import axios from "../axios";
 import { ResponseData } from "../types";
+import { useAuth } from "../contexts/AuthContext";
 
 interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
   const { receiver } = useAppSelector((state) => state.currentChat);
+  const { user } = useAuth();
   const { socket } = useSocket();
   const [messages, setMessages] = useState<DirectMessage[]>([]);
+  const [hasMore, setHasMore] = useState(false);
   const chatDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!receiver) return;
-
+    const emptyArr: DirectMessage[] = [];
+    setMessages(emptyArr);
     (async () => {
-      const payload = { receiverId: receiver!.id };
+      const payload = { receiverId: receiver.id };
       const { data: resData } = await axios.post<ResponseData>(
         "/api/direct-message/",
         payload
       );
       const { data, ok } = resData;
-      console.log(resData);
       if (ok) {
-        setMessages(data);
+        data.results.reverse();
+        setMessages(data.results);
+        setHasMore(data.hasMore);
         const scrollTop =
           chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
         chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
@@ -53,6 +58,27 @@ const Chat: React.FC<ChatProps> = () => {
     };
   }, [socket, receiver]);
 
+  const handleLoadMore = async () => {
+    if (!hasMore) return;
+
+    const payload = {
+      receiverId: receiver!.id,
+      timestamp: messages[0].createdAt,
+      id: messages[0].id,
+    };
+    const { data: resData } = await axios.post<ResponseData>(
+      "/api/direct-message/",
+      payload
+    );
+    const { data, ok } = resData;
+    if (ok) {
+      console.log(data);
+      data.results.reverse();
+      setMessages((p) => [...data.results, ...p]);
+      setHasMore(data.hasMore);
+    }
+  };
+
   if (!receiver) {
     return (
       <div className="flex-grow overflow-x-hidden overflow-y-auto">
@@ -66,8 +92,24 @@ const Chat: React.FC<ChatProps> = () => {
       className="flex-grow overflow-x-hidden overflow-y-auto"
       ref={chatDivRef}
     >
+      {hasMore && (
+        <button
+          className="py-1 px-3 rounded m-1 border-2 border-gray-300 uppercase text-sm hover:bg-gray-300"
+          onClick={handleLoadMore}
+        >
+          Load More
+        </button>
+      )}
+
       {messages.map((msg) => (
-        <ChatMessage key={msg.id} message={msg} />
+        <ChatMessage
+          key={msg.id}
+          message={{
+            ...msg,
+            sender: msg.senderId === user!.id ? user! : receiver,
+            receiver: msg.senderId === user!.id ? receiver! : user!,
+          }}
+        />
       ))}
     </div>
   );

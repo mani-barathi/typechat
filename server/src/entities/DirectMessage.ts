@@ -1,7 +1,6 @@
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -32,8 +31,11 @@ class DirectMessage extends BaseEntity {
   })
   receiver: User;
 
-  @CreateDateColumn()
-  createdAt: string;
+  @Column({ type: "bigint" })
+  createdAt: number;
+
+  // @CreateDateColumn()
+  // createdAt: string;
 }
 
 export default DirectMessage;

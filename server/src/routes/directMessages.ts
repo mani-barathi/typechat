@@ -10,28 +10,30 @@ const router = Router();
 
 router.post("/", isAuthenticated, async (req, res) => {
   const { id: senderId } = req.user;
-  const { receiverId } = req.body;
+  const { receiverId, timestamp, id } = req.body;
+  const limit = 5;
+  const take = limit + 1;
+  const replacements: any[] = [senderId, receiverId, take];
+  let createdAt;
+  if (timestamp && id) {
+    createdAt = true;
+    replacements.push(parseInt(timestamp), id);
+  }
 
   const messages = await getManager().query(
     `
-    select dm.*,
-    json_build_object(
-      'id',s.id,
-      'username',s.username
-    ) as "sender",
-    json_build_object(
-      'id',r.id,
-      'username',r.username
-    ) as "receiver"
-    from direct_messages as dm 
-    inner join users s on s.id = dm."senderId" 
-    inner join users r on r.id = dm."receiverId" 
-    where (dm."senderId" = $1 and dm."receiverId" = $2) or ("senderId" = $2 and "receiverId" = $1)
-  `,
-    [senderId, receiverId]
+    select dm.* from direct_messages as dm where 
+    ((dm."senderId" = $1 and dm."receiverId" = $2) or (dm."senderId" = $2 and dm."receiverId" = $1))
+    ${createdAt ? `and ((dm."createdAt", dm.id) < ($4, $5)) ` : ""}
+    order by dm."createdAt" desc, dm.id desc limit $3 `,
+    replacements
   );
 
-  res.json({ ok: true, data: messages });
+  const data = {
+    results: messages.slice(0, limit),
+    hasMore: messages.length === take,
+  };
+  res.json({ ok: true, data });
 });
 
 router.post("/send", isAuthenticated, async (req, res) => {
@@ -43,6 +45,7 @@ router.post("/send", isAuthenticated, async (req, res) => {
       senderId,
       text,
       receiverId,
+      createdAt: new Date().getTime(),
     }).save();
     const payload = {
       id,
