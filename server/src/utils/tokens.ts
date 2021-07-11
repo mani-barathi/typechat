@@ -9,7 +9,7 @@ export const createTokens = async (user: User) => {
   const payload = { username, id };
 
   const accessToken = jwt.sign(payload, process.env.SECRET1, {
-    expiresIn: "15s", // in a real app this should be in minutes, (I've set it in seconds just for testing)
+    expiresIn: "15m",
   });
 
   const refreshToken = jwt.sign(payload, process.env.SECRET2, {

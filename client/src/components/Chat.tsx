@@ -17,6 +17,7 @@ const Chat: React.FC<ChatProps> = () => {
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const chatDivRef = useRef<HTMLDivElement>(null);
+  const prevScrollHeightRef = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
 
   useEffect(() => {
     if (!receiver) return;
@@ -35,7 +36,7 @@ const Chat: React.FC<ChatProps> = () => {
         setHasMore(data.hasMore);
         const scrollTop =
           chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
-        chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
+        chatDivRef.current?.scrollTo({ top: scrollTop });
       }
     })();
   }, [receiver]);
@@ -61,6 +62,11 @@ const Chat: React.FC<ChatProps> = () => {
   const handleLoadMore = async () => {
     if (!hasMore) return;
 
+    prevScrollHeightRef.current = {
+      scrollTop: chatDivRef.current?.scrollTop,
+      scrollHeight: chatDivRef.current?.scrollHeight,
+    };
+
     const payload = {
       receiverId: receiver!.id,
       timestamp: messages[0].createdAt,
@@ -72,10 +78,13 @@ const Chat: React.FC<ChatProps> = () => {
     );
     const { data, ok } = resData;
     if (ok) {
-      console.log(data);
       data.results.reverse();
       setMessages((p) => [...data.results, ...p]);
       setHasMore(data.hasMore);
+      const newScrollPos =
+        chatDivRef.current!.scrollHeight -
+        prevScrollHeightRef.current.scrollHeight;
+      chatDivRef.current!.scrollTo({ top: newScrollPos });
     }
   };
 
@@ -89,16 +98,23 @@ const Chat: React.FC<ChatProps> = () => {
 
   return (
     <div
-      className="flex-grow overflow-x-hidden overflow-y-auto"
+      className="flex-grow overflow-x-hidden overflow-y-auto pb-20"
       ref={chatDivRef}
     >
-      {hasMore && (
+      {hasMore ? (
         <button
           className="py-1 px-3 rounded m-1 border-2 border-gray-300 uppercase text-sm hover:bg-gray-300"
           onClick={handleLoadMore}
         >
           Load More
         </button>
+      ) : (
+        <p
+          style={{ width: "fit-content" }}
+          className="text-center text-sm bg-yellow-100 p-1 px-3 m-auto mt-2 mb-2 text-gray-600 rounded shadow"
+        >
+          Messages are end-to-end encrypted
+        </p>
       )}
 
       {messages.map((msg) => (

@@ -11,7 +11,7 @@ const router = Router();
 router.post("/", isAuthenticated, async (req, res) => {
   const { id: senderId } = req.user;
   const { receiverId, timestamp, id } = req.body;
-  const limit = 5;
+  const limit = 15;
   const take = limit + 1;
   const replacements: any[] = [senderId, receiverId, take];
   let createdAt;
