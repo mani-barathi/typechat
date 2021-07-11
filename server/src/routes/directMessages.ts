@@ -57,6 +57,7 @@ router.post("/send", isAuthenticated, async (req, res) => {
       sender: { id: senderId, username: senderName },
     };
     const io: Socket = req.app.get("io");
+    const notificationIo: Socket = req.app.get("notificationIo");
     const { receiverRoomId, senderRoomId } = getPrivateChatRoomIds(
       senderName,
       receiverName
@@ -64,6 +65,10 @@ router.post("/send", isAuthenticated, async (req, res) => {
     io.to(senderRoomId)
       .to(receiverRoomId)
       .emit("receive-direct-message", payload);
+    notificationIo
+      .to(senderName)
+      .to(receiverName)
+      .emit("receive-notification", payload);
     return res.json({ ok: true });
   } catch (e) {
     console.log("sendDirectMessage Route", e);

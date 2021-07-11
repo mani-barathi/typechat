@@ -9,15 +9,37 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import axios from "../axios";
 import { ResponseData } from "../types";
 import { setRecentChats } from "../store/actionCreators";
+import { useSocket } from "../contexts/SocketContext";
+import { useAuth } from "../contexts/AuthContext";
 
 interface SideBarProps {}
 
 const SideBar: React.FC<SideBarProps> = () => {
   const dispatch = useAppDispatch();
+  const { notificationSocket } = useSocket();
+  const { user } = useAuth();
   const { chats } = useAppSelector((store) => store.chats);
   const { receiver } = useAppSelector((store) => store.currentChat);
   const [groupChatModal, setGroupModalChat] = useState(false);
   const [chatModal, setChatModal] = useState(false);
+
+  useEffect(() => {
+    if (!notificationSocket || !user) return;
+
+    const notificationReceiver = (data: any) => {
+      console.log("notification: ", data);
+    };
+
+    notificationSocket.emit("join-notification", { username: user.username });
+    notificationSocket.on("receive-notification", notificationReceiver);
+
+    return () => {
+      notificationSocket.off("receive-notifications", notificationReceiver);
+      notificationSocket?.emit("leave-notification", {
+        username: user.username,
+      });
+    };
+  }, [notificationSocket, user]);
 
   useEffect(() => {
     (async () => {

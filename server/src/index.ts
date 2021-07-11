@@ -43,6 +43,16 @@ const main = async () => {
       origin: process.env.CORS_ORIGIN,
     },
   });
+  const notificationIo = io.of("/notification");
+  notificationIo.use(authenticateSocket).on("connection", (socket: Socket) => {
+    socket.on("join-notification", async (data) => {
+      await socket.join(data.username);
+      console.log(data.username, "is listening for notifications");
+    });
+    socket.on("leave-notification", async (data) => {
+      await socket.leave(data.username);
+    });
+  });
 
   io.use(authenticateSocket).on("connection", (socket: Socket) => {
     const { username }: any = socket;
@@ -60,13 +70,14 @@ const main = async () => {
       const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);
       await socket.leave(senderRoomId);
       socket.rooms.delete(senderRoomId);
-      console.log(`${username} has left $${senderRoomId}`);
+      console.log(`${username} has left ${senderRoomId}`);
     });
 
     socket.on("disconnect", () => console.log("user disconnected"));
   });
 
   app.set("io", io);
+  app.set("notificationIo", notificationIo);
   // Routes
   app.get("/", (_, res) => res.send({ message: "Hello World" }));
   app.use("/api/auth", authRoutes);
