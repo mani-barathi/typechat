@@ -1,11 +1,11 @@
-import { User } from "../types/entities";
+import { Chat } from "../types/entities";
 
 export type ChatsAction = {
   type: string;
-  payload: User | User[];
+  payload: Chat | Chat[];
 };
 
 export type CurrentChatAction = {
   type: string;
-  payload: User;
+  payload: Chat;
 };

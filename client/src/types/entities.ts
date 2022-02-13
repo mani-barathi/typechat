@@ -4,6 +4,14 @@ export interface User {
   email: string;
 }
 
+export interface Chat {
+  id: number;
+  username: string;
+  email?: string;
+  createdAt?: string;
+  text?: string;
+}
+
 export interface DirectMessage {
   id: string;
   senderId: number;

@@ -2,19 +2,19 @@ import React from "react";
 import cn from "classnames";
 import { setCurrentChat } from "../store/actionCreators";
 import { useAppDispatch } from "../store/hooks";
-import { User } from "../types/entities";
+import { Chat } from "../types/entities";
 import { getAvatarUrl } from "../utils/common";
 
 interface SideBarChatProps {
-  user: User;
+  chat: Chat;
   active: Boolean;
 }
 
-const SideBarChat: React.FC<SideBarChatProps> = ({ user, active }) => {
+const SideBarChat: React.FC<SideBarChatProps> = ({ chat, active }) => {
   const dispatch = useAppDispatch();
 
   const goToChat = () => {
-    dispatch(setCurrentChat(user));
+    dispatch(setCurrentChat(chat));
   };
 
   return (
@@ -28,18 +28,21 @@ const SideBarChat: React.FC<SideBarChatProps> = ({ user, active }) => {
       onClick={goToChat}
     >
       <img
-        src={getAvatarUrl(user!.username)}
+        src={getAvatarUrl(chat!.username)}
         alt=""
         className="w-10 h-10 rounded-full object-cover"
       />
       <div className="flex-grow ml-2">
         <div className="flex items-center">
-          <h3 className="text-lg text-gray-800 truncate">{user.username}</h3>
-          <span className="text-xs ml-3 text-gray-500">10.40am</span>
+          <h3 className="text-lg text-gray-800 truncate">{chat.username}</h3>
+          {chat.createdAt && (
+            <span className="text-xs ml-3 text-gray-500">
+              {new Date(Number(chat.createdAt)).toLocaleTimeString()}
+            </span>
+          )}
         </div>
-        <p className="w-full text-sm text-gray-500 truncate">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab ducimus
-          eveniet sequi dolores dolorum fugiat maxime voluptas rerum quidem eos!
+        <p className="text-sm text-gray-500 truncate whitespace-nowrap overflow-hidden w-32">
+          {chat.text ? chat.text : ""}
         </p>
       </div>
     </div>

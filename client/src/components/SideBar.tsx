@@ -8,9 +8,10 @@ import NewGroupForm from "./NewGroupForm";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import axios from "../axios";
 import { ResponseData } from "../types";
-import { setRecentChats } from "../store/actionCreators";
+import { addReceivedMessage, setRecentChats } from "../store/actionCreators";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
+import { DirectMessage } from "../types/entities";
 
 interface SideBarProps {}
 
@@ -26,8 +27,29 @@ const SideBar: React.FC<SideBarProps> = () => {
   useEffect(() => {
     if (!notificationSocket || !user) return;
 
-    const notificationReceiver = (data: any) => {
-      console.log("notification: ", data);
+    const notificationReceiver = (data: DirectMessage) => {
+      const whoMessaged = data.sender!.username;
+      // I'm the sender
+      if (whoMessaged === user.username) {
+        dispatch(
+          addReceivedMessage({
+            id: data.receiverId,
+            username: data.receiver!.username,
+            createdAt: data.createdAt,
+            text: data.text,
+          })
+        );
+      } else {
+        // I'm the receiver sender
+        dispatch(
+          addReceivedMessage({
+            id: data.senderId,
+            username: data.sender!.username,
+            createdAt: data.createdAt,
+            text: data.text,
+          })
+        );
+      }
     };
 
     notificationSocket.emit("join-notification", { username: user.username });
@@ -39,7 +61,7 @@ const SideBar: React.FC<SideBarProps> = () => {
         username: user.username,
       });
     };
-  }, [notificationSocket, user]);
+  }, [notificationSocket, user, dispatch]);
 
   useEffect(() => {
     (async () => {
@@ -64,7 +86,7 @@ const SideBar: React.FC<SideBarProps> = () => {
         {chats.map((chat) => (
           <SideBarChat
             key={chat.username}
-            user={chat}
+            chat={chat}
             active={chat.username === receiver?.username}
           />
         ))}
