@@ -2,9 +2,9 @@ import { Chat } from "../types/entities";
 import {
   NEW_DIRECT_CHAT,
   RECEIVED_MESSAGE,
-  RECEIVED_SENT_MESSAGE,
   SET_CURRENT_CHAT,
   SET_RECENT_CHATS,
+  VIEW_RECEIVED_MESSAGE,
 } from "./actions";
 
 export const newDirectChat = (payload: Chat) => ({
@@ -27,7 +27,7 @@ export const addReceivedMessage = (payload: Chat) => ({
   payload,
 });
 
-export const addReceivedSentMessage = (payload: Chat) => ({
-  type: RECEIVED_SENT_MESSAGE,
+export const viewReceivedMessage = (payload: Chat) => ({
+  type: VIEW_RECEIVED_MESSAGE,
   payload,
 });

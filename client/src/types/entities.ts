@@ -10,6 +10,7 @@ export interface Chat {
   email?: string;
   createdAt?: string;
   text?: string;
+  unreadMessageCount?: number;
 }
 
 export interface DirectMessage {

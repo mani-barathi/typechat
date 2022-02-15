@@ -2,7 +2,7 @@ import { CurrentChatAction } from "../actionTypes";
 import { SET_CURRENT_CHAT } from "../actions";
 import { Chat } from "../../types/entities";
 
-interface CurrentChat {
+export interface CurrentChat {
   receiver: Chat | null;
   isGroupChat: Boolean;
 }

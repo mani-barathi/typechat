@@ -11,7 +11,7 @@ import { ResponseData } from "../types";
 import { addReceivedMessage, setRecentChats } from "../store/actionCreators";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
-import { DirectMessage } from "../types/entities";
+import { Chat, DirectMessage } from "../types/entities";
 
 interface SideBarProps {}
 
@@ -68,6 +68,7 @@ const SideBar: React.FC<SideBarProps> = () => {
       try {
         const { data: resData } = await axios.get<ResponseData>("/api/chats/");
         const { ok, data } = resData;
+        (data as Chat[]).forEach((d) => (d.unreadMessageCount = 0));
         if (ok) dispatch(setRecentChats(data));
       } catch (e) {
         console.log("sidebar", e);

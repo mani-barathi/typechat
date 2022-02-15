@@ -1,6 +1,6 @@
 import React from "react";
 import cn from "classnames";
-import { setCurrentChat } from "../store/actionCreators";
+import { setCurrentChat, viewReceivedMessage } from "../store/actionCreators";
 import { useAppDispatch } from "../store/hooks";
 import { Chat } from "../types/entities";
 import { getAvatarUrl } from "../utils/common";
@@ -15,6 +15,7 @@ const SideBarChat: React.FC<SideBarChatProps> = ({ chat, active }) => {
 
   const goToChat = () => {
     dispatch(setCurrentChat(chat));
+    dispatch(viewReceivedMessage(chat));
   };
 
   return (
@@ -33,17 +34,22 @@ const SideBarChat: React.FC<SideBarChatProps> = ({ chat, active }) => {
         className="w-10 h-10 rounded-full object-cover"
       />
       <div className="flex-grow ml-2">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <h3 className="text-lg text-gray-800 truncate">{chat.username}</h3>
-          {chat.createdAt && (
-            <span className="text-xs ml-3 text-gray-500">
-              {new Date(Number(chat.createdAt)).toLocaleTimeString()}
-            </span>
+          <small className="text-xs ml-3 text-gray-500">
+            {new Date(Number(chat.createdAt)).toLocaleTimeString()}
+          </small>
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500 truncate whitespace-nowrap overflow-hidden w-32">
+            {chat.text ? chat.text : ""}
+          </p>
+          {chat.unreadMessageCount !== 0 && (
+            <div className="bg-green-400 rounded-full px-2">
+              {chat.unreadMessageCount}
+            </div>
           )}
         </div>
-        <p className="text-sm text-gray-500 truncate whitespace-nowrap overflow-hidden w-32">
-          {chat.text ? chat.text : ""}
-        </p>
       </div>
     </div>
   );
