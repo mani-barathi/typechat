@@ -7,7 +7,6 @@ export interface User {
 export interface Chat {
   id: number;
   username: string;
-  email?: string;
   createdAt?: string;
   text?: string;
   unreadMessageCount?: number;
