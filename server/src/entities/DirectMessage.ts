@@ -33,9 +33,6 @@ class DirectMessage extends BaseEntity {
 
   @Column({ type: "bigint" })
   createdAt: number;
-
-  // @CreateDateColumn()
-  // createdAt: string;
 }
 
 export default DirectMessage;
