@@ -28,3 +28,13 @@ export interface LoginInput {
   email: string;
   password: string;
 }
+
+export interface Chat {
+  id: number;
+  name: string;
+  createdAt?: string;
+  text?: string;
+  unreadMessageCount?: number;
+  isGroupChat?: Boolean;
+  isAdmin?: Boolean;
+}

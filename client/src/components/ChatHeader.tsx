@@ -6,18 +6,18 @@ import { getAvatarUrl } from "../utils/common";
 interface ChatHeaderProps {}
 
 const ChatHeader: React.FC<ChatHeaderProps> = () => {
-  const { receiver } = useAppSelector((store) => store.currentChat);
+  const { chat } = useAppSelector((store) => store.currentChat);
 
-  if (!receiver) return null;
+  if (!chat) return null;
 
   return (
     <div className="flex items-center p-3 border-b xl:rounded-tr bg-green-400">
       <img
-        src={getAvatarUrl(receiver.username)}
+        src={getAvatarUrl(chat.name)}
         alt=""
         className="w-10 h-10 rounded-full object-cover"
       />
-      <h2 className="text-xl flex-grow ml-3 truncate">{receiver.username}</h2>
+      <h2 className="text-xl flex-grow ml-3 truncate">{chat.name}</h2>
 
       <button
         className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"

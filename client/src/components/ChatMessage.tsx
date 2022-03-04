@@ -7,16 +7,16 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const { sender, text, createdAt } = message;
+  const { senderName, text, createdAt } = message;
   return (
     <div className="mb-2 p-1 px-2 hover:bg-gray-100 transition duration-75">
       <div className="flex items-center">
         <img
-          src={getAvatarUrl(sender!.username)}
+          src={getAvatarUrl(senderName as string)}
           alt=""
           className="w-7 h-7 mr-2 rounded-full object-cover"
         />
-        <p className="font-semibold flex-grow">{sender!.username}</p>
+        <p className="font-semibold flex-grow">{senderName}</p>
         <span className="ml-4 mr-2 text-gray-500 text-xs">
           {formatTime(createdAt)}
         </span>

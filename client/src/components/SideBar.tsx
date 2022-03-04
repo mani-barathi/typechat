@@ -20,7 +20,7 @@ const SideBar: React.FC<SideBarProps> = () => {
   const { notificationSocket } = useSocket();
   const { user } = useAuth();
   const { chats } = useAppSelector((store) => store.chats);
-  const { receiver } = useAppSelector((store) => store.currentChat);
+  const { chat } = useAppSelector((store) => store.currentChat);
   const [groupChatModal, setGroupModalChat] = useState(false);
   const [chatModal, setChatModal] = useState(false);
 
@@ -28,13 +28,13 @@ const SideBar: React.FC<SideBarProps> = () => {
     if (!notificationSocket || !user) return;
 
     const notificationReceiver = (data: DirectMessage) => {
-      const whoMessaged = data.sender!.username;
+      const whoMessaged = data.senderName;
       // I'm the sender
       if (whoMessaged === user.username) {
         dispatch(
           addReceivedMessage({
             id: data.receiverId,
-            username: data.receiver!.username,
+            name: data.receiverName,
             createdAt: data.createdAt,
             text: data.text,
           })
@@ -44,7 +44,7 @@ const SideBar: React.FC<SideBarProps> = () => {
         dispatch(
           addReceivedMessage({
             id: data.senderId,
-            username: data.sender!.username,
+            name: data.senderName,
             createdAt: data.createdAt,
             text: data.text,
           })
@@ -84,12 +84,8 @@ const SideBar: React.FC<SideBarProps> = () => {
       />
 
       <div className="sidebar__chats pb-5 flex-grow overflow-x-hidden overflow-y-auto">
-        {chats.map((chat) => (
-          <SideBarChat
-            key={chat.username}
-            chat={chat}
-            active={chat.username === receiver?.username}
-          />
+        {chats.map((c) => (
+          <SideBarChat key={c.name} chat={c} active={c.name === chat?.name} />
         ))}
       </div>
 

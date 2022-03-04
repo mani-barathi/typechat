@@ -11,7 +11,7 @@ import { useAuth } from "../contexts/AuthContext";
 interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
-  const { receiver } = useAppSelector((state) => state.currentChat);
+  const { chat } = useAppSelector((state) => state.currentChat);
   const { user } = useAuth();
   const { socket } = useSocket();
   const [messages, setMessages] = useState<DirectMessage[]>([]);
@@ -20,11 +20,11 @@ const Chat: React.FC<ChatProps> = () => {
   const prevScrollHeightRef = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
 
   useEffect(() => {
-    if (!receiver) return;
+    if (!chat) return;
     const emptyArr: DirectMessage[] = [];
     setMessages(emptyArr);
     (async () => {
-      const payload = { receiverId: receiver.id };
+      const payload = { receiverId: chat.id };
       const { data: resData } = await axios.post<ResponseData>(
         "/api/direct-message/",
         payload
@@ -39,10 +39,10 @@ const Chat: React.FC<ChatProps> = () => {
         chatDivRef.current?.scrollTo({ top: scrollTop });
       }
     })();
-  }, [receiver]);
+  }, [chat]);
 
   useEffect(() => {
-    if (!receiver || !socket) return;
+    if (!chat || !socket) return;
     const messageReceiver = (message: DirectMessage) => {
       setMessages((p) => [...p, message]);
       const scrollTop =
@@ -50,14 +50,14 @@ const Chat: React.FC<ChatProps> = () => {
       chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
     };
 
-    socket.emit("join-direct-message", { receiverName: receiver.username });
+    socket.emit("join-direct-message", { receiverName: chat.name });
     socket.on("receive-direct-message", messageReceiver);
 
     return () => {
       socket.off("receive-direct-message", messageReceiver);
-      socket?.emit("leave-direct-message", { receiverName: receiver.username });
+      socket?.emit("leave-direct-message", { receiverName: chat.name });
     };
-  }, [socket, receiver]);
+  }, [socket, chat]);
 
   const handleLoadMore = async () => {
     if (!hasMore) return;
@@ -68,7 +68,7 @@ const Chat: React.FC<ChatProps> = () => {
     };
 
     const payload = {
-      receiverId: receiver!.id,
+      receiverId: chat!.id,
       timestamp: messages[0].createdAt,
       id: messages[0].id,
     };
@@ -88,7 +88,7 @@ const Chat: React.FC<ChatProps> = () => {
     }
   };
 
-  if (!receiver) {
+  if (!chat) {
     return (
       <div className="flex-grow overflow-x-hidden overflow-y-auto">
         <Splash isfullScreen={false} spinner={false} text={splashText} />
@@ -122,8 +122,9 @@ const Chat: React.FC<ChatProps> = () => {
           key={msg.id}
           message={{
             ...msg,
-            sender: msg.senderId === user!.id ? user! : receiver,
-            receiver: msg.senderId === user!.id ? receiver! : user!,
+            senderName: msg.senderId === user!.id ? user?.username! : chat.name,
+            receiverName:
+              msg.senderId === user!.id ? chat.name : user?.username!,
           }}
         />
       ))}

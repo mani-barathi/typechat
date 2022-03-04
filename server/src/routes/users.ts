@@ -10,7 +10,7 @@ router.get("/:username", isAuthenticated, async (req, res) => {
   const { username } = req.params;
   try {
     const user = await User.findOneOrFail({ username });
-    return res.json({ ok: true, data: user });
+    return res.json({ ok: true, data: { ...user, name: user.username } });
   } catch (e) {
     if (e instanceof EntityNotFoundError)
       return res.json({ ok: false, error: "no user exists with that name" });

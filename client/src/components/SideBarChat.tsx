@@ -29,13 +29,13 @@ const SideBarChat: React.FC<SideBarChatProps> = ({ chat, active }) => {
       onClick={goToChat}
     >
       <img
-        src={getAvatarUrl(chat!.username)}
+        src={getAvatarUrl(chat!.name)}
         alt=""
         className="w-10 h-10 rounded-full object-cover"
       />
       <div className="flex-grow ml-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg text-gray-800 truncate">{chat.username}</h3>
+          <h3 className="text-lg text-gray-800 truncate">{chat.name}</h3>
           <small className="text-xs ml-3 text-gray-500">
             {new Date(Number(chat.createdAt)).toLocaleTimeString()}
           </small>

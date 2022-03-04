@@ -53,8 +53,8 @@ router.post("/send", isAuthenticated, async (req, res) => {
       text,
       senderId,
       receiverId,
-      receiver: { id: receiverId, username: receiverName },
-      sender: { id: senderId, username: senderName },
+      receiverName,
+      senderName,
     };
     const io: Socket = req.app.get("io");
     const notificationIo: Socket = req.app.get("notificationIo");

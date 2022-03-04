@@ -7,9 +7,9 @@ interface ChatInputProps {}
 
 const ChatInput: React.FC<ChatInputProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { receiver } = useAppSelector((state) => state.currentChat);
+  const { chat } = useAppSelector((state) => state.currentChat);
 
-  if (!receiver) return null;
+  if (!chat) return null;
 
   const handleSendMessage: React.FormEventHandler = async (e) => {
     e.preventDefault();
@@ -17,8 +17,8 @@ const ChatInput: React.FC<ChatInputProps> = () => {
     if (!text) return;
 
     const payload = {
-      receiverId: receiver!.id,
-      receiverName: receiver!.username,
+      receiverId: chat.id,
+      receiverName: chat.name,
       text,
     };
     try {

@@ -6,7 +6,7 @@ export interface User {
 
 export interface Chat {
   id: number;
-  username: string;
+  name: string;
   createdAt?: string;
   text?: string;
   unreadMessageCount?: number;
@@ -18,8 +18,8 @@ export interface DirectMessage {
   id: string;
   senderId: number;
   receiverId: number;
-  sender?: Pick<User, "id" | "username">;
-  receiver?: Pick<User, "id" | "username">;
+  senderName: string;
+  receiverName: string;
   text: string;
   createdAt: string;
 }
