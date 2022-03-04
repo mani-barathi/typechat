@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import GroupMember from "./GroupMember";
+import GroupMessage from "./GroupMessage";
 import User from "./User";
 
 @Entity({ name: "groups" })
@@ -28,6 +29,9 @@ class Group extends BaseEntity {
 
   @OneToMany(() => GroupMember, (gm) => gm.group)
   members: GroupMember[];
+
+  @OneToMany(() => GroupMessage, (gm) => gm.group)
+  messages: GroupMessage[];
 
   @Column({ type: "bigint" })
   createdAt: number;

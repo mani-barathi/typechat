@@ -16,13 +16,16 @@ const ChatInput: React.FC<ChatInputProps> = () => {
     const text = inputRef.current!.value;
     if (!text) return;
 
-    const payload = {
-      receiverId: chat.id,
-      receiverName: chat.name,
-      text,
-    };
     try {
-      await axios.post("/api/direct-message/send", payload);
+      if (chat.isGroupChat) {
+        await axios.post("/api/group/send", { groupId: chat.id, text });
+      } else {
+        await axios.post("/api/direct-message/send", {
+          receiverId: chat.id,
+          receiverName: chat.name,
+          text,
+        });
+      }
       inputRef.current!.value = "";
     } catch (e) {
       console.log("Chat Input:", e);

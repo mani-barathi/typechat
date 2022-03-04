@@ -9,6 +9,7 @@ import {
 import DirectMessage from "./DirectMessage";
 import Group from "./Group";
 import GroupMember from "./GroupMember";
+import GroupMessage from "./GroupMessage";
 
 @Entity({ name: "users" })
 class User extends BaseEntity {
@@ -30,6 +31,9 @@ class User extends BaseEntity {
 
   @OneToMany(() => GroupMember, (g) => g.member)
   members: GroupMember[];
+
+  @OneToMany(() => GroupMessage, (g) => g.sender)
+  sentGroupMessages: GroupMessage[];
 
   @Index()
   @Column()
