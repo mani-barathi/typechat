@@ -16,9 +16,17 @@ router.get("/", isAuthenticated, async (req, res) => {
   `,
     [id]
   );
+  const groupChats: Chat[] = await getManager().query(
+    `select g.name,g.id, gm."isAdmin", g."createdAt" from group_members gm 
+     inner join groups g on g.id = gm."groupId" 
+     where gm."memberId" = $1`,
+    [id]
+  );
   const filteredRecentChats = recentChats.filter((c) => c.id !== id);
   filteredRecentChats.forEach((frc) => (frc.isGroupChat = false));
-  return res.json({ ok: true, data: filteredRecentChats });
+  groupChats.forEach((gc) => (gc.isGroupChat = true));
+  const allChats = [...groupChats, ...filteredRecentChats];
+  return res.json({ ok: true, data: allChats });
 });
 
 export default router;
