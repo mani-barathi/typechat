@@ -1,7 +1,6 @@
 import {
   BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
@@ -30,8 +29,8 @@ class Group extends BaseEntity {
   @OneToMany(() => GroupMember, (gm) => gm.group)
   members: GroupMember[];
 
-  @CreateDateColumn()
-  createdAt: string;
+  @Column({ type: "bigint" })
+  createdAt: number;
 }
 
 export default Group;

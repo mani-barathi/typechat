@@ -18,19 +18,21 @@ function App() {
   const { setUser } = useAuth();
 
   useEffect(() => {
-    axios.post<LoginResponse>("/api/auth/refresh").then(({ data: resData }) => {
-      if (resData.ok) {
-        setAccessToken(resData.data.accessToken);
-        setUser(resData.data.user);
-      } else {
-        console.log(resData.error);
-        const isSignupPage = ["/signup"].includes(window.location.pathname);
-        if (!isSignupPage) {
-          history.push("/login");
+    axios
+      .post<LoginResponse>("/api/auth/refresh")
+      .then(({ data: resData }) => {
+        if (resData.ok) {
+          setAccessToken(resData.data.accessToken);
+          setUser(resData.data.user);
+        } else {
+          const isSignupPage = ["/signup"].includes(window.location.pathname);
+          if (!isSignupPage) {
+            history.push("/login");
+          }
         }
-      }
-      setLoading(false);
-    });
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [setUser, history]);
 
   if (loading) return <Splash spinner={true} />;

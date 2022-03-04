@@ -10,6 +10,8 @@ export interface Chat {
   createdAt?: string;
   text?: string;
   unreadMessageCount?: number;
+  isGroupChat?: Boolean;
+  isAdmin?: Boolean;
 }
 
 export interface DirectMessage {
