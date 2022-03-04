@@ -25,18 +25,21 @@ const Chat: React.FC<ChatProps> = () => {
     setMessages(emptyArr);
     (async () => {
       const payload = { receiverId: chat.id };
-      const { data: resData } = await axios.post<ResponseData>(
-        "/api/direct-message/",
-        payload
-      );
-      const { data, ok } = resData;
-      if (ok) {
-        data.results.reverse();
-        setMessages(data.results);
-        setHasMore(data.hasMore);
-        const scrollTop =
-          chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
-        chatDivRef.current?.scrollTo({ top: scrollTop });
+      if (chat.isGroupChat) {
+      } else {
+        const { data: resData } = await axios.post<ResponseData>(
+          "/api/direct-message/",
+          payload
+        );
+        const { data, ok } = resData;
+        if (ok) {
+          data.results.reverse();
+          setMessages(data.results);
+          setHasMore(data.hasMore);
+          const scrollTop =
+            chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
+          chatDivRef.current?.scrollTo({ top: scrollTop });
+        }
       }
     })();
   }, [chat]);
@@ -50,12 +53,22 @@ const Chat: React.FC<ChatProps> = () => {
       chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
     };
 
-    socket.emit("join-direct-message", { receiverName: chat.name });
-    socket.on("receive-direct-message", messageReceiver);
+    if (chat.isGroupChat) {
+      // socket.emit("join-group-message", { receiverName: chat.id });
+      // socket.on("receive-group-message", messageReceiver);
+    } else {
+      socket.emit("join-direct-message", { receiverName: chat.name });
+      socket.on("receive-direct-message", messageReceiver);
+    }
 
     return () => {
-      socket.off("receive-direct-message", messageReceiver);
-      socket?.emit("leave-direct-message", { receiverName: chat.name });
+      if (chat.isGroupChat) {
+        // socket.off("receive-group-message", messageReceiver);
+        // socket?.emit("leave-group-message", { receiverName: chat.id });
+      } else {
+        socket.off("receive-direct-message", messageReceiver);
+        socket?.emit("leave-direct-message", { receiverName: chat.name });
+      }
     };
   }, [socket, chat]);
 
