@@ -59,4 +59,32 @@ router.post("/send", isAuthenticated, async (req, res) => {
   }
 });
 
+router.post("/messages", isAuthenticated, async (req, res) => {
+  const { timestamp, groupId, id } = req.body;
+  const limit = 15;
+  const take = limit + 1;
+  const replacements: any[] = [groupId, take];
+  let createdAt;
+  if (timestamp && id) {
+    createdAt = true;
+    replacements.push(parseInt(timestamp), id);
+  }
+
+  const messages = await getManager().query(
+    `
+    select gm.*, u.username as "senderName" from group_messages as gm inner join "users" u on u.id = gm."senderId"
+    where gm."groupId" = $1 ${
+      createdAt ? `and ((gm."createdAt", gm.id) < ($3, $4)) ` : ""
+    }
+    order by gm."createdAt" desc, gm.id desc limit $2 `,
+    replacements
+  );
+
+  const data = {
+    results: messages.slice(0, limit),
+    hasMore: messages.length === take,
+  };
+  res.json({ ok: true, data });
+});
+
 export default router;

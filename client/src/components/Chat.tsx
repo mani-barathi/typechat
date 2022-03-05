@@ -24,22 +24,22 @@ const Chat: React.FC<ChatProps> = () => {
     const emptyArr: DirectMessage[] = [];
     setMessages(emptyArr);
     (async () => {
-      const payload = { receiverId: chat.id };
-      if (chat.isGroupChat) {
-      } else {
-        const { data: resData } = await axios.post<ResponseData>(
-          "/api/direct-message/",
-          payload
-        );
-        const { data, ok } = resData;
-        if (ok) {
-          data.results.reverse();
-          setMessages(data.results);
-          setHasMore(data.hasMore);
-          const scrollTop =
-            chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
-          chatDivRef.current?.scrollTo({ top: scrollTop });
-        }
+      const payload = { groupId: chat.id, receiverId: chat.id };
+      const messagesUrl = chat.isGroupChat
+        ? "/api/group/messages"
+        : "/api/direct-message";
+      const { data: resData } = await axios.post<ResponseData>(
+        messagesUrl,
+        payload
+      );
+      const { data, ok } = resData;
+      if (ok) {
+        data.results.reverse();
+        setMessages(data.results);
+        setHasMore(data.hasMore);
+        const scrollTop =
+          chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
+        chatDivRef.current?.scrollTo({ top: scrollTop });
       }
     })();
   }, [chat]);
@@ -80,13 +80,18 @@ const Chat: React.FC<ChatProps> = () => {
       scrollHeight: chatDivRef.current?.scrollHeight,
     };
 
+    const messagesUrl = chat?.isGroupChat
+      ? "/api/group/messages"
+      : "/api/direct-message";
+
     const payload = {
+      groupId: chat!.id,
       receiverId: chat!.id,
       timestamp: messages[0].createdAt,
       id: messages[0].id,
     };
     const { data: resData } = await axios.post<ResponseData>(
-      "/api/direct-message/",
+      messagesUrl,
       payload
     );
     const { data, ok } = resData;
