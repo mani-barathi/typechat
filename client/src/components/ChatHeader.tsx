@@ -22,13 +22,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = () => {
       />
       <h2 className="text-xl flex-grow ml-3 truncate">{chat.name}</h2>
 
-      <button
-        className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
-        title="Add Participant"
-        onClick={() => setOpen(true)}
-      >
-        <PlusIcon className="h-7 -w-7" />
-      </button>
+      {chat.isGroupChat && (
+        <button
+          className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
+          title="Add Participant"
+          onClick={() => setOpen(true)}
+        >
+          <PlusIcon className="h-7 -w-7" />
+        </button>
+      )}
       <Modal title="Add Participant" open={open} closeFn={() => setOpen(false)}>
         <NewGroupMemberForm closeFn={() => setOpen(false)} />
       </Modal>
