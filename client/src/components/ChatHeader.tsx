@@ -1,11 +1,14 @@
-import React from "react";
-import { DotsVerticalIcon } from "@heroicons/react/outline";
+import { PlusIcon } from "@heroicons/react/outline";
+import React, { useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import { getAvatarUrl } from "../utils/common";
+import Modal from "./Modal";
+import NewGroupMemberForm from "./NewGroupMemberForm";
 
 interface ChatHeaderProps {}
 
 const ChatHeader: React.FC<ChatHeaderProps> = () => {
+  const [open, setOpen] = useState(false);
   const { chat } = useAppSelector((store) => store.currentChat);
 
   if (!chat) return null;
@@ -21,10 +24,14 @@ const ChatHeader: React.FC<ChatHeaderProps> = () => {
 
       <button
         className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
-        title="Options"
+        title="Add Participant"
+        onClick={() => setOpen(true)}
       >
-        <DotsVerticalIcon className="h-6 w-6" />
+        <PlusIcon className="h-7 -w-7" />
       </button>
+      <Modal title="Add Participant" open={open} closeFn={() => setOpen(false)}>
+        <NewGroupMemberForm closeFn={() => setOpen(false)} />
+      </Modal>
     </div>
   );
 };
