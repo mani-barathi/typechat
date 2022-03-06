@@ -22,7 +22,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = () => {
       />
       <h2 className="text-xl flex-grow ml-3 truncate">{chat.name}</h2>
 
-      {chat.isGroupChat && (
+      {chat.isGroupChat && chat.isAdmin && (
         <button
           className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
           title="Add Participant"

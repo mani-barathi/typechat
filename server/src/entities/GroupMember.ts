@@ -4,23 +4,20 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from "typeorm";
 import Group from "./Group";
 import User from "./User";
 
 @Entity({ name: "group_members" })
 class GroupMember extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   isAdmin: Boolean;
 
-  @Column()
+  @PrimaryColumn()
   memberId: number;
 
-  @Column()
+  @PrimaryColumn()
   groupId: number;
 
   @ManyToOne(() => Group, (g) => g.members, {

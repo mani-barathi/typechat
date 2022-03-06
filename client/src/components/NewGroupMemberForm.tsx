@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios from "../axios";
+import { useAuth } from "../contexts/AuthContext";
+import { useAppSelector } from "../store/hooks";
 import { ResponseData } from "../types";
 
 interface NewGroupFormProps {
@@ -7,6 +9,8 @@ interface NewGroupFormProps {
 }
 
 const NewGroupMemberForm: React.FC<NewGroupFormProps> = ({ closeFn }) => {
+  const { user } = useAuth();
+  const { chat } = useAppSelector((state) => state.currentChat);
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,9 +23,13 @@ const NewGroupMemberForm: React.FC<NewGroupFormProps> = ({ closeFn }) => {
     setSuccess(false);
     setError("");
     const name = inputRef.current?.value.trim().toLowerCase();
+    if (user?.username === name) {
+      return setError("You can't add yourself to the group");
+    }
     try {
       const { data } = await axios.post<ResponseData>(`/api/group/add`, {
         name,
+        groupId: chat?.id,
       });
       if (data.ok) {
         setSuccess(`${name} added to group`);

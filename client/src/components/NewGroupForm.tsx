@@ -25,7 +25,7 @@ const NewGroupForm: React.FC<NewGroupFormProps> = ({ closeFn }) => {
         { name }
       );
       if (resData.ok) {
-        resData.data.username = resData.data.name;
+        resData.data.isGroupChat = true;
         dispatch(setCurrentChat(resData.data!));
         dispatch(newDirectChat(resData.data!));
         return closeFn();

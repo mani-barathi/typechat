@@ -3,6 +3,7 @@ import { getManager } from "typeorm";
 import Group from "../entities/Group";
 import GroupMember from "../entities/GroupMember";
 import GroupMessage from "../entities/GroupMessage";
+import User from "../entities/User";
 import { isAuthenticated } from "../middlewares/auth";
 
 const router = Router();
@@ -85,6 +86,24 @@ router.post("/messages", isAuthenticated, async (req, res) => {
     hasMore: messages.length === take,
   };
   res.json({ ok: true, data });
+});
+
+router.post("/add", isAuthenticated, async (req, res) => {
+  const { groupId, name } = req.body;
+
+  const user = await User.findOne({ username: name });
+  console.log(user);
+  if (!user) {
+    return res.json({ ok: false, error: "No user found!" });
+  }
+
+  await GroupMember.create({
+    memberId: user.id,
+    isAdmin: false,
+    groupId,
+  }).save();
+
+  return res.json({ ok: true });
 });
 
 export default router;
