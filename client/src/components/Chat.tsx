@@ -3,7 +3,7 @@ import ChatMessage from "./ChatMessage";
 import Splash from "./Splash";
 import { useSocket } from "../contexts/SocketContext";
 import { useAppSelector } from "../store/hooks";
-import { DirectMessage } from "../types/entities";
+import { Message } from "../types/entities";
 import axios from "../axios";
 import { ResponseData } from "../types";
 import { useAuth } from "../contexts/AuthContext";
@@ -14,14 +14,14 @@ const Chat: React.FC<ChatProps> = () => {
   const { chat } = useAppSelector((state) => state.currentChat);
   const { user } = useAuth();
   const { socket } = useSocket();
-  const [messages, setMessages] = useState<DirectMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const chatDivRef = useRef<HTMLDivElement>(null);
   const prevScrollHeightRef = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
 
   useEffect(() => {
     if (!chat) return;
-    const emptyArr: DirectMessage[] = [];
+    const emptyArr: Message[] = [];
     setMessages(emptyArr);
     (async () => {
       const payload = { groupId: chat.id, receiverId: chat.id };
@@ -46,7 +46,7 @@ const Chat: React.FC<ChatProps> = () => {
 
   useEffect(() => {
     if (!chat || !socket) return;
-    const messageReceiver = (message: DirectMessage) => {
+    const messageReceiver = (message: Message) => {
       setMessages((p) => [...p, message]);
       const scrollTop =
         chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
@@ -140,9 +140,12 @@ const Chat: React.FC<ChatProps> = () => {
           key={msg.id}
           message={{
             ...msg,
-            senderName: msg.senderId === user!.id ? user?.username! : chat.name,
-            receiverName:
-              msg.senderId === user!.id ? chat.name : user?.username!,
+            senderName:
+              msg.senderId === user!.id
+                ? user!.username!
+                : chat.isGroupChat
+                ? msg.senderName
+                : chat.name,
           }}
         />
       ))}

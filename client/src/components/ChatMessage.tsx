@@ -1,9 +1,9 @@
 import React from "react";
-import { DirectMessage } from "../types/entities";
+import { Message } from "../types/entities";
 import { formatTime, getAvatarUrl } from "../utils/common";
 
 interface ChatMessageProps {
-  message: DirectMessage;
+  message: Message;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {

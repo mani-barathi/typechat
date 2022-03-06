@@ -14,12 +14,12 @@ export interface Chat {
   isAdmin?: Boolean;
 }
 
-export interface DirectMessage {
+export interface Message {
   id: string;
   senderId: number;
-  receiverId: number;
+  receiverId?: number;
   senderName: string;
-  receiverName: string;
+  receiverName?: string;
   text: string;
   createdAt: string;
 }

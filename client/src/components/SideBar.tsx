@@ -11,7 +11,7 @@ import { ResponseData } from "../types";
 import { addReceivedMessage, setRecentChats } from "../store/actionCreators";
 import { useSocket } from "../contexts/SocketContext";
 import { useAuth } from "../contexts/AuthContext";
-import { Chat, DirectMessage } from "../types/entities";
+import { Chat, Message } from "../types/entities";
 
 interface SideBarProps {}
 
@@ -27,14 +27,14 @@ const SideBar: React.FC<SideBarProps> = () => {
   useEffect(() => {
     if (!notificationSocket || !user) return;
 
-    const notificationReceiver = (data: DirectMessage) => {
+    const notificationReceiver = (data: Message) => {
       const whoMessaged = data.senderName;
       // I'm the sender
       if (whoMessaged === user.username) {
         dispatch(
           addReceivedMessage({
-            id: data.receiverId,
-            name: data.receiverName,
+            id: data.receiverId!,
+            name: data.receiverName!,
             createdAt: data.createdAt,
             text: data.text,
           })
