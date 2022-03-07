@@ -54,8 +54,8 @@ const Chat: React.FC<ChatProps> = () => {
     };
 
     if (chat.isGroupChat) {
-      // socket.emit("join-group-message", { receiverName: chat.id });
-      // socket.on("receive-group-message", messageReceiver);
+      socket.emit("join-group-message", { groupId: chat.id });
+      socket.on("receive-group-message", messageReceiver);
     } else {
       socket.emit("join-direct-message", { receiverName: chat.name });
       socket.on("receive-direct-message", messageReceiver);
@@ -63,11 +63,11 @@ const Chat: React.FC<ChatProps> = () => {
 
     return () => {
       if (chat.isGroupChat) {
-        // socket.off("receive-group-message", messageReceiver);
-        // socket?.emit("leave-group-message", { receiverName: chat.id });
+        socket.off("receive-group-message", messageReceiver);
+        socket.emit("leave-group-message", { groupId: chat.id });
       } else {
         socket.off("receive-direct-message", messageReceiver);
-        socket?.emit("leave-direct-message", { receiverName: chat.name });
+        socket.emit("leave-direct-message", { receiverName: chat.name });
       }
     };
   }, [socket, chat]);

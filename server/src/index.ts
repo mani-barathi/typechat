@@ -59,6 +59,19 @@ const main = async () => {
     const { username }: any = socket;
     console.log(`${username} connected!`);
 
+    socket.on("join-group-message", async (data: any) => {
+      const { groupId } = data;
+      await socket.join(`${groupId}`);
+      console.log(`${username} is chatting in ${groupId}`);
+    });
+
+    socket.on("leave-group-message", async (data: any) => {
+      const { groupId } = data;
+      await socket.leave(`${groupId}`);
+      socket.rooms.delete(`${groupId}`);
+      console.log(`${username} has left ${groupId}`);
+    });
+
     socket.on("join-direct-message", async (data: any) => {
       const { receiverName } = data;
       const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);

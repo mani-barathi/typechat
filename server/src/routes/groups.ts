@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Socket } from "socket.io";
 import { getManager } from "typeorm";
 import Group from "../entities/Group";
 import GroupMember from "../entities/GroupMember";
@@ -52,8 +53,8 @@ router.post("/send", isAuthenticated, async (req, res) => {
       senderName,
       createdAt,
     };
-    console.log(payload);
-    // send to all listening sockets
+    const io: Socket = req.app.get("io");
+    io.to(`${groupId}`).emit("receive-group-message", payload);
     return res.json({ ok: true });
   } catch (e) {
     return res.json({ ok: false, error: e.message });
