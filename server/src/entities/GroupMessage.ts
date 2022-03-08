@@ -5,10 +5,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import Group from "./Group";
 import User from "./User";
 
-@Entity({ name: "direct_messages" })
-class DirectMessage extends BaseEntity {
+@Entity({ name: "group_messages" })
+class GroupMessage extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -19,20 +20,20 @@ class DirectMessage extends BaseEntity {
   senderId: number;
 
   @Column()
-  receiverId: number;
+  groupId: number;
 
-  @ManyToOne(() => User, (user) => user.sentDirectMessages, {
+  @ManyToOne(() => User, (user) => user.sentGroupMessages, {
     onDelete: "CASCADE",
   })
   sender: User;
 
-  @ManyToOne(() => User, (user) => user.receivedDirectMessages, {
+  @ManyToOne(() => Group, (g) => g.messages, {
     onDelete: "CASCADE",
   })
-  receiver: User;
+  group: Group;
 
   @Column({ type: "bigint" })
   createdAt: number;
 }
 
-export default DirectMessage;
+export default GroupMessage;

@@ -36,5 +36,5 @@ export interface LoginInput {
 }
 
 export interface SearchUser extends ResponseData {
-  data: User | undefined;
+  data: { name: string; id: number; email?: string } | undefined;
 }

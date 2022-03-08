@@ -7,6 +7,9 @@ import {
   OneToMany,
 } from "typeorm";
 import DirectMessage from "./DirectMessage";
+import Group from "./Group";
+import GroupMember from "./GroupMember";
+import GroupMessage from "./GroupMessage";
 
 @Entity({ name: "users" })
 class User extends BaseEntity {
@@ -22,6 +25,15 @@ class User extends BaseEntity {
 
   @OneToMany(() => DirectMessage, (dm) => dm.receiver)
   receivedDirectMessages: DirectMessage[];
+
+  @OneToMany(() => Group, (g) => g.creator)
+  createdGroups: Group[];
+
+  @OneToMany(() => GroupMember, (g) => g.member)
+  members: GroupMember[];
+
+  @OneToMany(() => GroupMessage, (g) => g.sender)
+  sentGroupMessages: GroupMessage[];
 
   @Index()
   @Column()

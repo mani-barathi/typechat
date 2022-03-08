@@ -6,18 +6,20 @@ export interface User {
 
 export interface Chat {
   id: number;
-  username: string;
+  name: string;
   createdAt?: string;
   text?: string;
   unreadMessageCount?: number;
+  isGroupChat?: Boolean;
+  isAdmin?: Boolean;
 }
 
-export interface DirectMessage {
+export interface Message {
   id: string;
   senderId: number;
-  receiverId: number;
-  sender?: Pick<User, "id" | "username">;
-  receiver?: Pick<User, "id" | "username">;
+  receiverId?: number;
+  senderName: string;
+  receiverName?: string;
   text: string;
   createdAt: string;
 }

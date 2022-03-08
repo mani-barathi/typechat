@@ -42,15 +42,15 @@ const reducer = (
       });
 
       const filteredChats = state.chats.filter(
-        (c) => c.username !== (action.payload as Chat).username
+        (c) => c.name !== (action.payload as Chat).name
       );
 
       const isMessageFromCurrentChat =
-        currentChat.receiver?.id === action.payload.id;
+        currentChat.chat?.id === action.payload.id;
 
       const newChat: Chat = {
         id: action.payload.id,
-        username: action.payload.username,
+        name: action.payload.name,
         createdAt: action.payload.createdAt,
         text: action.payload.text,
         unreadMessageCount: isMessageFromCurrentChat ? 0 : 1,

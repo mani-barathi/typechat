@@ -3,7 +3,7 @@ import ChatMessage from "./ChatMessage";
 import Splash from "./Splash";
 import { useSocket } from "../contexts/SocketContext";
 import { useAppSelector } from "../store/hooks";
-import { DirectMessage } from "../types/entities";
+import { Message } from "../types/entities";
 import axios from "../axios";
 import { ResponseData } from "../types";
 import { useAuth } from "../contexts/AuthContext";
@@ -11,22 +11,25 @@ import { useAuth } from "../contexts/AuthContext";
 interface ChatProps {}
 
 const Chat: React.FC<ChatProps> = () => {
-  const { receiver } = useAppSelector((state) => state.currentChat);
+  const { chat } = useAppSelector((state) => state.currentChat);
   const { user } = useAuth();
   const { socket } = useSocket();
-  const [messages, setMessages] = useState<DirectMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const chatDivRef = useRef<HTMLDivElement>(null);
   const prevScrollHeightRef = useRef<any>({ scrollTop: 0, scrollHeight: 0 });
 
   useEffect(() => {
-    if (!receiver) return;
-    const emptyArr: DirectMessage[] = [];
+    if (!chat) return;
+    const emptyArr: Message[] = [];
     setMessages(emptyArr);
     (async () => {
-      const payload = { receiverId: receiver.id };
+      const payload = { groupId: chat.id, receiverId: chat.id };
+      const messagesUrl = chat.isGroupChat
+        ? "/api/group/messages"
+        : "/api/direct-message";
       const { data: resData } = await axios.post<ResponseData>(
-        "/api/direct-message/",
+        messagesUrl,
         payload
       );
       const { data, ok } = resData;
@@ -39,25 +42,35 @@ const Chat: React.FC<ChatProps> = () => {
         chatDivRef.current?.scrollTo({ top: scrollTop });
       }
     })();
-  }, [receiver]);
+  }, [chat]);
 
   useEffect(() => {
-    if (!receiver || !socket) return;
-    const messageReceiver = (message: DirectMessage) => {
+    if (!chat || !socket) return;
+    const messageReceiver = (message: Message) => {
       setMessages((p) => [...p, message]);
       const scrollTop =
         chatDivRef.current!.scrollHeight - chatDivRef.current!.clientHeight;
       chatDivRef.current?.scrollTo({ top: scrollTop, behavior: "smooth" });
     };
 
-    socket.emit("join-direct-message", { receiverName: receiver.username });
-    socket.on("receive-direct-message", messageReceiver);
+    if (chat.isGroupChat) {
+      socket.emit("join-group-message", { groupId: chat.id });
+      socket.on("receive-group-message", messageReceiver);
+    } else {
+      socket.emit("join-direct-message", { receiverName: chat.name });
+      socket.on("receive-direct-message", messageReceiver);
+    }
 
     return () => {
-      socket.off("receive-direct-message", messageReceiver);
-      socket?.emit("leave-direct-message", { receiverName: receiver.username });
+      if (chat.isGroupChat) {
+        socket.off("receive-group-message", messageReceiver);
+        socket.emit("leave-group-message", { groupId: chat.id });
+      } else {
+        socket.off("receive-direct-message", messageReceiver);
+        socket.emit("leave-direct-message", { receiverName: chat.name });
+      }
     };
-  }, [socket, receiver]);
+  }, [socket, chat]);
 
   const handleLoadMore = async () => {
     if (!hasMore) return;
@@ -67,13 +80,18 @@ const Chat: React.FC<ChatProps> = () => {
       scrollHeight: chatDivRef.current?.scrollHeight,
     };
 
+    const messagesUrl = chat?.isGroupChat
+      ? "/api/group/messages"
+      : "/api/direct-message";
+
     const payload = {
-      receiverId: receiver!.id,
+      groupId: chat!.id,
+      receiverId: chat!.id,
       timestamp: messages[0].createdAt,
       id: messages[0].id,
     };
     const { data: resData } = await axios.post<ResponseData>(
-      "/api/direct-message/",
+      messagesUrl,
       payload
     );
     const { data, ok } = resData;
@@ -88,7 +106,7 @@ const Chat: React.FC<ChatProps> = () => {
     }
   };
 
-  if (!receiver) {
+  if (!chat) {
     return (
       <div className="flex-grow overflow-x-hidden overflow-y-auto">
         <Splash isfullScreen={false} spinner={false} text={splashText} />
@@ -122,8 +140,12 @@ const Chat: React.FC<ChatProps> = () => {
           key={msg.id}
           message={{
             ...msg,
-            sender: msg.senderId === user!.id ? user! : receiver,
-            receiver: msg.senderId === user!.id ? receiver! : user!,
+            senderName:
+              msg.senderId === user!.id
+                ? user!.username!
+                : chat.isGroupChat
+                ? msg.senderName
+                : chat.name,
           }}
         />
       ))}

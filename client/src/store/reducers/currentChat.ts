@@ -3,13 +3,11 @@ import { SET_CURRENT_CHAT } from "../actions";
 import { Chat } from "../../types/entities";
 
 export interface CurrentChat {
-  receiver: Chat | null;
-  isGroupChat: Boolean;
+  chat: Chat | null;
 }
 
 const initialState: CurrentChat = {
-  receiver: null,
-  isGroupChat: false,
+  chat: null,
 };
 
 const reducer = (
@@ -18,7 +16,7 @@ const reducer = (
 ) => {
   switch (action.type) {
     case SET_CURRENT_CHAT:
-      return { ...state, receiver: action.payload };
+      return { ...state, chat: action.payload };
 
     default:
       return state;

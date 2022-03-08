@@ -7,22 +7,25 @@ interface ChatInputProps {}
 
 const ChatInput: React.FC<ChatInputProps> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { receiver } = useAppSelector((state) => state.currentChat);
+  const { chat } = useAppSelector((state) => state.currentChat);
 
-  if (!receiver) return null;
+  if (!chat) return null;
 
   const handleSendMessage: React.FormEventHandler = async (e) => {
     e.preventDefault();
     const text = inputRef.current!.value;
     if (!text) return;
 
-    const payload = {
-      receiverId: receiver!.id,
-      receiverName: receiver!.username,
-      text,
-    };
     try {
-      await axios.post("/api/direct-message/send", payload);
+      if (chat.isGroupChat) {
+        await axios.post("/api/group/send", { groupId: chat.id, text });
+      } else {
+        await axios.post("/api/direct-message/send", {
+          receiverId: chat.id,
+          receiverName: chat.name,
+          text,
+        });
+      }
       inputRef.current!.value = "";
     } catch (e) {
       console.log("Chat Input:", e);

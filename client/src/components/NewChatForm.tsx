@@ -28,7 +28,7 @@ const NewChatForm: React.FC<NewChatFormProps> = ({ closeFn }) => {
 
     // receiver is already present in the chats, just set the currentChat to the receiver and return
     for (let chat of chats) {
-      if (chat.username === receiverName) {
+      if (chat.name === receiverName) {
         dispatch(setCurrentChat(chat));
         return closeFn();
       }
