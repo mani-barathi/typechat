@@ -3,7 +3,7 @@ import cn from "classnames";
 import { setCurrentChat, viewReceivedMessage } from "../store/actionCreators";
 import { useAppDispatch } from "../store/hooks";
 import { Chat } from "../types/entities";
-import { getAvatarUrl } from "../utils/common";
+import { formatDate, getAvatarUrl } from "../utils/common";
 
 interface SideBarChatProps {
   chat: Chat;
@@ -37,7 +37,7 @@ const SideBarChat: React.FC<SideBarChatProps> = ({ chat, active }) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg text-gray-800 truncate">{chat.name}</h3>
           <small className="text-xs ml-3 text-gray-500">
-            {new Date(Number(chat.createdAt)).toLocaleTimeString()}
+            {formatDate(chat.createdAt)}
           </small>
         </div>
         <div className="flex items-center justify-between">

@@ -15,3 +15,20 @@ export const formatTime = (time: any): string => {
   const temp = t[0].split(":", 2);
   return `${date[0]} ${date[1]} ${date[2]} ${temp[0]}:${temp[1]} ${period}`;
 };
+
+export const formatDate = (dateTime: any): String => {
+  let dObj;
+  if (isNaN(dateTime)) {
+    dObj = new Date(dateTime);
+  } else {
+    dObj = new Date(parseInt(dateTime));
+  }
+  const t = dObj.toLocaleTimeString().split(" ");
+  const period = t[1];
+  const temp = t[0].split(":", 2);
+  const dateString = dObj.toDateString();
+  const timeString = `${temp[0]}:${temp[1]} ${period}`;
+  return new Date().toLocaleDateString() === dObj.toLocaleDateString()
+    ? timeString
+    : dateString;
+};
