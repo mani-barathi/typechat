@@ -21,7 +21,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
           {formatTime(createdAt)}
         </span>
       </div>
-      <p>{text}</p>
+      <p className="break-words">{text}</p>
     </div>
   );
 };

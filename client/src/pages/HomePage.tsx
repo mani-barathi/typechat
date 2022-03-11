@@ -14,7 +14,7 @@ const HomePage: React.FC<HomePageProps> = () => {
     >
       <SideBar />
 
-      <div className="flex-grow bg-gray-50 flex flex-col">
+      <div className="flex-grow bg-gray-50 flex flex-col w-4/6">
         <ChatHeader />
         <Chat />
         <ChatInput />
