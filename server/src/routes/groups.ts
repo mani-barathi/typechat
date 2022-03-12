@@ -108,3 +108,17 @@ router.post("/add", isAuthenticated, async (req, res) => {
 });
 
 export default router;
+
+router.post("/leave", isAuthenticated, async (req, res) => {
+  const { id } = req.user;
+  const { groupId } = req.body;
+  try {
+    await getManager().query(
+      'delete from group_members where "memberId" = $1 and "groupId" = $2',
+      [id, groupId]
+    );
+    return res.json({ ok: true });
+  } catch (e) {
+    return res.json({ ok: false, error: e.message });
+  }
+});
