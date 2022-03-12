@@ -1,15 +1,17 @@
-import { PlusIcon } from "@heroicons/react/outline";
+import { LogoutIcon, PlusIcon } from "@heroicons/react/outline";
 import React, { useState } from "react";
 import { useAppSelector } from "../store/hooks";
 import { getAvatarUrl } from "../utils/common";
+import LeaveGroup from "./LeaveGroup";
 import Modal from "./Modal";
 import NewGroupMemberForm from "./NewGroupMemberForm";
 
 interface ChatHeaderProps {}
 
 const ChatHeader: React.FC<ChatHeaderProps> = () => {
-  const [open, setOpen] = useState(false);
   const { chat } = useAppSelector((store) => store.currentChat);
+  const [addParticipantModal, setAddParticipantModal] = useState(false);
+  const [leaveGroupModal, setLeaveGroupModal] = useState(false);
 
   if (!chat) return null;
 
@@ -26,13 +28,34 @@ const ChatHeader: React.FC<ChatHeaderProps> = () => {
         <button
           className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
           title="Add Participant"
-          onClick={() => setOpen(true)}
+          onClick={() => setAddParticipantModal(true)}
         >
           <PlusIcon className="h-7 -w-7" />
         </button>
       )}
-      <Modal title="Add Participant" open={open} closeFn={() => setOpen(false)}>
-        <NewGroupMemberForm closeFn={() => setOpen(false)} />
+      {chat.isGroupChat && (
+        <button
+          className="px-2 rounded-full text-white transition duration-150 transform hover:scale-90"
+          title="Leave Group"
+          onClick={() => setLeaveGroupModal(true)}
+        >
+          <LogoutIcon className="h-7 -w-7" />
+        </button>
+      )}
+
+      <Modal
+        title="Add Participant"
+        open={addParticipantModal}
+        closeFn={() => setAddParticipantModal(false)}
+      >
+        <NewGroupMemberForm closeFn={() => setAddParticipantModal(false)} />
+      </Modal>
+      <Modal
+        title="Exit Group"
+        open={leaveGroupModal}
+        closeFn={() => setLeaveGroupModal(false)}
+      >
+        <LeaveGroup closeFn={() => setLeaveGroupModal(false)} />
       </Modal>
     </div>
   );
