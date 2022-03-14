@@ -93,16 +93,27 @@ router.post("/add", isAuthenticated, async (req, res) => {
   const { groupId, name } = req.body;
 
   const user = await User.findOne({ username: name });
-  console.log(user);
   if (!user) {
     return res.json({ ok: false, error: "No user found!" });
   }
 
-  await GroupMember.create({
-    memberId: user.id,
-    isAdmin: false,
-    groupId,
-  }).save();
+  const prevUser = await GroupMember.findOne({ memberId: user.id, groupId });
+  if (prevUser) {
+    return res.json({
+      ok: false,
+      error: "User is already a Participant of the Chat",
+    });
+  }
+
+  await getManager().transaction(async (tm) => {
+    await tm.save<GroupMember>(
+      GroupMember.create({ groupId: groupId, memberId: user.id, isAdmin: true })
+    );
+    await tm.query(
+      `update groups set "totalMembers" = "totalMembers" + 1 where id = $1`,
+      [groupId]
+    );
+  });
 
   return res.json({ ok: true });
 });
@@ -113,10 +124,16 @@ router.post("/leave", isAuthenticated, async (req, res) => {
   const { id } = req.user;
   const { groupId } = req.body;
   try {
-    await getManager().query(
-      'delete from group_members where "memberId" = $1 and "groupId" = $2',
-      [id, groupId]
-    );
+    await getManager().transaction(async (tm) => {
+      await tm.query(
+        'delete from group_members where "memberId" = $1 and "groupId" = $2',
+        [id, groupId]
+      );
+      await tm.query(
+        `update groups set "totalMembers" = "totalMembers" - 1 where id = $1`,
+        [groupId]
+      );
+    });
     return res.json({ ok: true });
   } catch (e) {
     return res.json({ ok: false, error: e.message });
