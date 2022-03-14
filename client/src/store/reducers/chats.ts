@@ -2,6 +2,7 @@ import { ChatsAction } from "../actionTypes";
 import {
   NEW_DIRECT_CHAT,
   RECEIVED_MESSAGE,
+  REMOVE_CHAT,
   SET_RECENT_CHATS,
   VIEW_RECEIVED_MESSAGE,
 } from "../actions";
@@ -78,6 +79,15 @@ const reducer = (
       };
     }
 
+    case REMOVE_CHAT: {
+      const updatedChats = state.chats.filter(
+        (chat) => chat.id !== (action.payload as Chat).id
+      );
+
+      return {
+        chats: updatedChats,
+      };
+    }
     default:
       return state;
   }

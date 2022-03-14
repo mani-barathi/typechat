@@ -2,6 +2,7 @@ import { Chat } from "../types/entities";
 import {
   NEW_DIRECT_CHAT,
   RECEIVED_MESSAGE,
+  REMOVE_CHAT,
   SET_CURRENT_CHAT,
   SET_RECENT_CHATS,
   VIEW_RECEIVED_MESSAGE,
@@ -12,7 +13,7 @@ export const newDirectChat = (payload: Chat) => ({
   payload,
 });
 
-export const setCurrentChat = (payload: Chat) => ({
+export const setCurrentChat = (payload: Chat | null) => ({
   type: SET_CURRENT_CHAT,
   payload,
 });
@@ -29,5 +30,10 @@ export const addReceivedMessage = (payload: Chat) => ({
 
 export const viewReceivedMessage = (payload: Chat) => ({
   type: VIEW_RECEIVED_MESSAGE,
+  payload,
+});
+
+export const removeChat = (payload: Chat) => ({
+  type: REMOVE_CHAT,
   payload,
 });

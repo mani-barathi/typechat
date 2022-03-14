@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../axios";
-import { useAppSelector } from "../store/hooks";
+import { removeChat, setCurrentChat } from "../store/actionCreators";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { ResponseData } from "../types";
 
 interface NewGroupFormProps {
@@ -8,6 +9,7 @@ interface NewGroupFormProps {
 }
 
 const LeaveGroup: React.FC<NewGroupFormProps> = ({ closeFn }) => {
+  const dispatch = useAppDispatch();
   const { chat } = useAppSelector((state) => state.currentChat);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,15 +21,17 @@ const LeaveGroup: React.FC<NewGroupFormProps> = ({ closeFn }) => {
         groupId: chat?.id,
       });
       if (data.ok) {
-        // dispatch action to remove the chat from chats[]
-        // dispatch action set someother chat as the currentChat
+        dispatch(removeChat(chat!));
+        dispatch(setCurrentChat(null));
+        closeFn();
       } else {
         setError(data.error!);
+        setLoading(false);
       }
     } catch (e: any) {
       setError(e.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
