@@ -1,12 +1,14 @@
 import { Chat } from "../types";
 
-export const getPrivateChatRoomIds = (
+export const getDirectChatRoomId = (
   senderName: string,
   receiverName: string
 ) => {
-  const receiverRoomId = `${receiverName}-${senderName}`;
-  const senderRoomId = `${senderName}-${receiverName}`;
-  return { receiverRoomId, senderRoomId };
+  if (senderName > receiverName) {
+    return `${receiverName}-${senderName}`;
+  } else {
+    return `${senderName}-${receiverName}`;
+  }
 };
 
 export const mergeChatArrays = (

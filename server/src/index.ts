@@ -13,7 +13,7 @@ import chatRoutes from "./routes/chats";
 import directMessageRoutes from "./routes/directMessages";
 import groupRoutes from "./routes/groups";
 import { PORT } from "./contants";
-import { getPrivateChatRoomIds } from "./utils/chat";
+import { getDirectChatRoomId } from "./utils/chat";
 import { authenticateSocket } from "./middlewares/auth";
 
 const main = async () => {
@@ -74,17 +74,17 @@ const main = async () => {
 
     socket.on("join-direct-message", async (data: any) => {
       const { receiverName } = data;
-      const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);
-      await socket.join(senderRoomId);
+      const roomId = getDirectChatRoomId(username, receiverName);
+      await socket.join(roomId);
       console.log(`${username} is chatting with ${receiverName}`);
     });
 
     socket.on("leave-direct-message", async (data: any) => {
       const { receiverName } = data;
-      const { senderRoomId } = getPrivateChatRoomIds(username, receiverName);
-      await socket.leave(senderRoomId);
-      socket.rooms.delete(senderRoomId);
-      console.log(`${username} has left ${senderRoomId}`);
+      const roomId = getDirectChatRoomId(username, receiverName);
+      await socket.leave(roomId);
+      socket.rooms.delete(roomId);
+      console.log(`${username} has left ${roomId}`);
     });
 
     socket.on("disconnect", () => console.log("user disconnected"));

@@ -1,10 +1,9 @@
 import { Router } from "express";
 import { Socket } from "socket.io";
 import { getManager } from "typeorm";
-
 import DirectMessage from "../entities/DirectMessage";
 import { isAuthenticated } from "../middlewares/auth";
-import { getPrivateChatRoomIds } from "../utils/chat";
+import { getDirectChatRoomId } from "../utils/chat";
 
 const router = Router();
 
@@ -58,13 +57,8 @@ router.post("/send", isAuthenticated, async (req, res) => {
     };
     const io: Socket = req.app.get("io");
     const notificationIo: Socket = req.app.get("notificationIo");
-    const { receiverRoomId, senderRoomId } = getPrivateChatRoomIds(
-      senderName,
-      receiverName
-    );
-    io.to(senderRoomId)
-      .to(receiverRoomId)
-      .emit("receive-direct-message", payload);
+    const roomId = getDirectChatRoomId(senderName, receiverName);
+    io.to(roomId).emit("receive-direct-message", payload);
     notificationIo
       .to(senderName)
       .to(receiverName)
